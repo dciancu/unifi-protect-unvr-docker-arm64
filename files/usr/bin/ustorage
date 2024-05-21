@@ -1,0 +1,63 @@
+#!/bin/bash
+
+source /etc/default/storage_disk
+disk="${STORAGE_DISK:-/dev/sda1}"
+device=$(basename ${disk})
+sbytes=$(df -B1 --output=size ${disk} | awk 'NR==2 {print $1}')
+sused=$(df -B1 --output=used ${disk} | awk 'NR==2 {print $1}')
+
+case $1 in
+    disk)
+	cat <<EOT
+[
+    {
+        "action": "none",
+        "ata": "ATA8-ACS",
+        "bad_sector": 0,
+        "estimate": null,
+        "firmware": "AX001Q",
+        "healthy": "good",
+        "life_span": null,
+        "model": "UniFi Protect fake disk",
+        "poweronhrs": 1,
+        "progress": null,
+        "reason": null,
+        "rpm": 5400,
+        "sata": "SATA 2.6",
+        "serial": "X0JNP396T",
+        "size": ${sbytes},
+        "slot": 1,
+        "state": "normal",
+        "temperature": 49,
+        "threshold": 10,
+        "type": "HDD"
+    }
+]
+EOT
+	;;
+    space)
+	cat <<EOT
+[
+    {
+        "action": "none",
+        "device": "${device}",
+        "estimate": 0,
+        "health": "health",
+        "progress": null,
+        "reasons": [],
+        "space_type": "primary",
+        "total_bytes": ${sbytes},
+        "used_bytes": ${sused}
+    }
+]
+EOT
+	;;
+ config)
+	cat <<EOT
+{
+    "hotspare": false,
+    "raid": "single"
+}
+EOT
+
+esac

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/usr/sbin/smartctl.orig "$@" \
+    | sed '/=== START OF INFORMATION SECTION ===/a Device Model:         UniFi Protect fake disk' \
+    | sed '/=== START OF READ SMART DATA SECTION ===/a SMART overall-health self-assessment test result: PASSED'

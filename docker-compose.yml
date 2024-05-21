@@ -1,0 +1,31 @@
+services:
+  unifi-protect:
+    image: unifi-protect-arm64-new
+    hostname: UNVR
+    extra_hosts:
+      - "UNVR:127.0.1.1"
+    container_name: unifi-protect
+    cgroup: host
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - ${PWD}/storage/srv:/srv
+      - ${PWD}/storage/data:/data
+      - ${PWD}/storage/persistent:/persistent
+    environment:
+      - STORAGE_DISK=/dev/sda
+      - TZ=UTC
+    restart: unless-stopped
+    cap_add:
+      - dac_read_search
+      - sys_admin
+    security_opt:
+      - apparmor=unconfined
+      - seccomp=unconfined
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+      - /var/run
+      - /var/run/lock
+    privileged: true
+    network_mode: host

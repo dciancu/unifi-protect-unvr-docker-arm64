@@ -1,0 +1,35 @@
+#!/bin/bash
+
+source /etc/default/storage_disk
+disk="${STORAGE_DISK:-/dev/sda1}"
+
+sbytes=$(df -B1 --output=size ${disk} | awk 'NR==2 {print $1}')
+sgb=$(df -B1GB --output=size ${disk} | awk 'NR==2 {print $1}')
+sgib=$(df -B1G --output=size ${disk} | awk 'NR==2 {print $1}')
+
+cat << EOF
+/dev/md3:
+        Version : 1.2
+  Creation Time : Fri Feb  7 18:44:50 2020
+     Raid Level : raid0
+     Array Size : ${sbytes} (${sgib} GiB ${sgb} GB)
+   Raid Devices : 1
+  Total Devices : 1
+    Persistence : Superblock is persistent
+
+    Update Time : Fri Feb  7 18:47:06 2020
+          State : clean
+ Active Devices : 1
+Working Devices : 1
+ Failed Devices : 0
+  Spare Devices : 0
+
+     Chunk Size : 512K
+
+           Name : UniFi-NVR:3  (local to host UniFi-NVR)
+           UUID : 69236e25:1e110793:0eae2270:f47ff8ef
+         Events : 0
+
+    Number   Major   Minor   RaidDevice State
+       0       8        16        0      active sync   ${disk}
+EOF

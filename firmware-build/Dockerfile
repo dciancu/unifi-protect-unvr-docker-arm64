@@ -18,7 +18,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         wget --no-verbose --show-progress --progress=dot:giga -O fwupdate.bin -i - \
     && test -z "$FW_URL" || wget --no-verbose --show-progress --progress=dot:giga -O fwupdate.bin "$FW_URL" \
     && if test -f /opt/firmware/fwupdate.sha1 && sha1sum -c /opt/firmware/fwupdate.sha1; then \
-        rm fwupdate.bin && cp -r /opt/firmware/* . && (cd / && rm -rf $(ls -A | grep -v opt); exit) && exit; fi \
+        rm fwupdate.bin && cp -r /opt/firmware/* . && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0) && exit 0; fi \
     && sha1sum fwupdate.bin > fwupdate.sha1 \
     && apt-get install -y binwalk \
     && adduser --disabled-password --gecos '' build \
@@ -38,7 +38,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && cp unifi-protect* ../unifi-protect-deb/ \
     && cd .. \
     && rm -r _fwupdate.bin.extracted debs-build \
-    && (cd / && rm -rf $(ls -A | grep -v opt); exit) && exit
+    && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0) && exit 0
 
 FROM scratch AS firmware
 COPY --from=firmware-build /opt/firmware-build /

@@ -5,5 +5,5 @@ set -euo pipefail
 SCRIPT_DIR="$(dirname "$0")"
 cd "$SCRIPT_DIR"
 
-sh build-firmware.sh
-sh build-protect.sh
+bash build-firmware.sh
+bash build-protect.sh

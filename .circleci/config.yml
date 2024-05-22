@@ -6,4 +6,5 @@ jobs:
         resource_class: arm.large
         steps:
             - checkout
+            - setup_remote_docker
             - run: ./build.sh

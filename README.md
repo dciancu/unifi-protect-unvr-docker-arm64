@@ -4,6 +4,11 @@
 
 Run UniFi Protect UNVR in Docker on ARM64 hardware.
 
+> [!IMPORTANT]  
+> Disconnect the docker host from the internet during the initial console setup, else it will auto update and may
+> break the container.  
+> Also remember to disable auto update of the console and applications in the console settings.
+
 ## Usage
 
 Docker Hub Image: [dciancu/unifi-protect-unvr-docker-arm64](https://hub.docker.com/r/dciancu/unifi-protect-unvr-docker-arm64)  
@@ -17,6 +22,17 @@ Make sure you have read the below section on [Issues running systemd inside dock
 
 There is not output to `stdout`, and thus the `docker logs` of the container are empty.  
 You can check logs inside the container using `journalctl -f` and files in `/var/log`.
+
+## Setup
+
+When you run the image for the first time, you have to go through the initial console setup, find the host IP address and
+navigate to `http://host-ip`.  
+Make sure you have disconnected the internet on the docker host (else it will auto update and may break the container),
+and proceed with the offline mode setup.  
+After the initial setup, got to console settings and disable auto update of the console and applications.  
+The auto-update does not work and may break the container.
+
+You can now proceed to add cameras to Protect.
 
 ### Issues running Systemd inside Docker
 

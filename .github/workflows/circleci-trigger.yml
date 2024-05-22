@@ -1,0 +1,14 @@
+on: push
+#    schedule:
+#        - cron: '* * * * *'
+jobs:
+    trigger:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - run: |
+                git config user.name 'dciancu'
+                git config user.email 'dciancu@users.noreply.github.com'
+                git branch build
+                git commit --allow-empty -m 'trigger'
+                git push --force -u origin build

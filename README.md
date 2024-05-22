@@ -14,7 +14,7 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 Docker Hub Image: [dciancu/unifi-protect-unvr-docker-arm64](https://hub.docker.com/r/dciancu/unifi-protect-unvr-docker-arm64)  
 Tags:
 - **stable - recommended**, uses unifi-protect version packaged in UNVR firmware
-- latest - uses latest unifi-protect version (may not always work)
+- edge - uses latest unifi-protect version (may not always work)
 - specific version - uses unifi-protect version packaged in UNVR firmware (this is an alias for each stable release)
 
 Run the container using `docker compose` with the provided `docker-compose.yml`.  

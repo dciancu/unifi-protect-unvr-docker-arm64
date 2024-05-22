@@ -1,5 +1,7 @@
 # UniFi Protect UNVR Docker container for arm64
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/circleci/F8zvFL89rXf6pgQo3twuVc/5tkZtrshQpSz4fo3k8M7ZZ/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/F8zvFL89rXf6pgQo3twuVc/5tkZtrshQpSz4fo3k8M7ZZ/tree/main)
+
 Run UniFi Protect UNVR in Docker on ARM64 hardware.
 
 ## Usage

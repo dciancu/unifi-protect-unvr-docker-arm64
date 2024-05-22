@@ -5,4 +5,5 @@ jobs:
             - image: debian
         resource_class: arm.large
         steps:
+            - checkout
             - run: ./build.sh

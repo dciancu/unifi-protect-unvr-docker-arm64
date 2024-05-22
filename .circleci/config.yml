@@ -4,6 +4,8 @@ jobs:
         docker:
             - image: cimg/base:current
         resource_class: arm.large
+        environment:
+            BUILDKIT_PROGRESS: plain
         steps:
             - checkout
             - setup_remote_docker

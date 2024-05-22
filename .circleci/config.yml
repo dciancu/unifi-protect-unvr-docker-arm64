@@ -1,0 +1,8 @@
+version: 2.1
+jobs:
+    build:
+        docker:
+            - image: debian
+        resource_class: arm.large
+        steps:
+            - run: ./build.sh

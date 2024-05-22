@@ -7,4 +7,9 @@ jobs:
         steps:
             - checkout
             - setup_remote_docker
-            - run: ./build.sh
+            - run:
+                  name: Build Firmware
+                  command: ./build-firmware.sh
+            - run:
+                  name: Build Protect
+                  command: ./build-protect.sh

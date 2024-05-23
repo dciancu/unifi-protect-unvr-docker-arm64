@@ -31,6 +31,18 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         ethtool \
         procps
 
+RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
+    set -euo pipefail \
+    && apt-get update \
+    && apt-get -y --no-install-recommends install systemd systemd-timesyncd \
+    && find /etc/systemd/system \
+        /lib/systemd/system \
+        -path '*.wants/*' \
+        -not -name '*journald*' \
+        -not -name '*systemd-tmpfiles*' \
+        -not -name '*systemd-user-sessions*' \
+        -exec rm \{} \;
+
 # RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
 #     curl -sL https://deb.nodesource.com/setup_16.x | bash - \
 #     && apt-get install -y --no-install-recommends nodejs
@@ -60,19 +72,6 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get update \
     && apt-get -y --no-install-recommends install postgresql-14 postgresql-9.6
 
-RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
-    set -euo pipefail \
-    && apt-get update \
-    && apt-get -y --no-install-recommends install systemd systemd-timesyncd \
-    && find /etc/systemd/system \
-        /lib/systemd/system \
-        -path '*.wants/*' \
-        -not -name '*journald*' \
-        -not -name '*systemd-tmpfiles*' \
-        -not -name '*systemd-user-sessions*' \
-        -exec rm \{} \;
-STOPSIGNAL SIGINT
-
 COPY firmware/version /usr/lib/version
 COPY files/lib /lib/
 
@@ -89,11 +88,13 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb unifi-protect \
     && test -z "$UNVR_STABLE" || apt-get -y --no-install-recommends --force-yes \
-        -o Dpkg::Options::='--force-confdef" -o Dpkg::Options::="--force-confold' \
+        -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb \
     && echo 'exit 0' > /usr/sbin/policy-rc.d \
     && sed -i 's/redirectHostname: unifi//' /usr/share/unifi-core/app/config/default.yaml \
     && mv /sbin/mdadm /sbin/mdadm.orig \
+    && mv /sbin/ubnt-tools /sbin/ubnt-tools.orig \
+    && mv /usr/bin/ustorage /usr/bin/ustorage.orig \
     && mv /usr/sbin/smartctl /usr/sbin/smartctl.orig \
     && systemctl enable storage_disk dbpermissions \
     && pg_dropcluster --stop 9.6 main \
@@ -109,4 +110,5 @@ COPY files/etc /etc/
 
 VOLUME ["/srv", "/data", "/persistent"]
 
+STOPSIGNAL SIGINT
 CMD ["/lib/systemd/systemd"]

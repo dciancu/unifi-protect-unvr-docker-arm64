@@ -1,5 +1,60 @@
 #!/bin/bash
 
-/usr/sbin/smartctl.orig "$@" \
-    | sed '/=== START OF INFORMATION SECTION ===/a Device Model:         UniFi Protect fake disk' \
-    | sed '/=== START OF READ SMART DATA SECTION ===/a SMART overall-health self-assessment test result: PASSED'
+source /etc/default/storage_disk
+disk="${STORAGE_DISK:-/dev/sda1}"
+device=$(basename ${disk})
+sbytes=$(df -B1 --output=size ${disk} | awk 'NR==2 {print $1}')
+sused=$(df -B1 --output=used ${disk} | awk 'NR==2 {print $1}')
+
+case $3 in
+    /dev/sda1)
+	cat <<EOT
+smartctl 7.2 2020-12-30 r5155 [x86_64-linux-5.10.0-8-amd64] (local build)
+Copyright (C) 2002-20, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Device Model:     WD82PURZ-85TEUY0
+Serial Number:    WD-WX62D313TEZ3
+LU WWN Device Id: 5 000039 fe6eb1ec3
+Firmware Version: 81.00B81
+User Capacity:    8,001,574,060,032 bytes [8.00 TB]
+Sector Sizes:     512 bytes logical, 4096 bytes physical
+Rotation Rate:    5400 rpm
+Form Factor:      3.5 inches
+Device is:        In smartctl database [for details use: -P show]
+ATA Version is:   ATA8-ACS T13/1699-D revision 4
+SATA Version is:  SATA 3.0, 6.0 Gb/s (current: 6.0 Gb/s)
+Local Time is:    Sat Jun  3 19:16:20 2023 BST
+SMART support is: Available - device has SMART capability.
+SMART support is: Enabled
+
+=== START OF READ SMART DATA SECTION ===
+SMART overall-health self-assessment test result: PASSED
+EOT
+	;;
+    /dev/sdb1)
+	cat <<EOT
+smartctl 7.2 2020-12-30 r5155 [x86_64-linux-5.10.0-8-amd64] (local build)
+Copyright (C) 2002-20, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Device Model:     WD82PURZ-85TEUY0
+Serial Number:    WD-WX62D313TEZ2
+LU WWN Device Id: 5 0014ee 26988e4e3
+Firmware Version: 81.00B81
+User Capacity:    8,001,574,060,032 bytes [8.00 TB]
+Sector Sizes:     512 bytes logical, 4096 bytes physical
+Rotation Rate:    5400 rpm
+Form Factor:      3.5 inches
+Device is:        Not in smartctl database [for details use: -P showall]
+ATA Version is:   ACS-3 T13/2161-D revision 5
+SATA Version is:  SATA 3.1, 6.0 Gb/s (current: 6.0 Gb/s)
+Local Time is:    Sat Jun  3 19:17:46 2023 BST
+SMART support is: Available - device has SMART capability.
+SMART support is: Enabled
+
+=== START OF READ SMART DATA SECTION ===
+SMART overall-health self-assessment test result: PASSED
+EOT
+
+esac

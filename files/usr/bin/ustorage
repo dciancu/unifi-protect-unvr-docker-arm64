@@ -17,16 +17,38 @@ case $1 in
         "estimate": null,
         "firmware": "AX001Q",
         "healthy": "good",
-        "life_span": null,
+        "life_span": 0,
         "model": "UniFi Protect fake disk",
         "poweronhrs": 1,
         "progress": null,
         "reason": null,
         "rpm": 5400,
-        "sata": "SATA 2.6",
+        "sata": "SATA 3",
         "serial": "X0JNP396T",
         "size": ${sbytes},
         "slot": 1,
+        "state": "normal",
+        "temperature": 49,
+        "threshold": 10,
+        "type": "HDD"
+    },
+    {
+        "action": "none",
+        "ata": "ATA8-ACS",
+        "bad_sector": 0,
+        "estimate": null,
+        "firmware": "AX001Q",
+        "healthy": "good",
+        "life_span": 0,
+        "model": "UniFi Protect fake disk 2",
+        "poweronhrs": 1,
+        "progress": null,
+        "reason": null,
+        "rpm": 5400,
+        "sata": "SATA 3",
+        "serial": "X0JNP397T",
+        "size": ${sbytes},
+        "slot": 2,
         "state": "normal",
         "temperature": 49,
         "threshold": 10,
@@ -56,7 +78,7 @@ EOT
 	cat <<EOT
 {
     "hotspare": false,
-    "raid": "single"
+    "raid": "raid1"
 }
 EOT
 

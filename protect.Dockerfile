@@ -13,6 +13,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     set -euo pipefail \
     && apt-get update \
     && apt-get -y --no-install-recommends install \
+        vim \
         curl \
         wget \
         mount \
@@ -63,7 +64,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         -not -name '*systemd-tmpfiles*' \
         -not -name '*systemd-user-sessions*' \
         -exec rm \{} \;
-STOPSIGNAL SIGKILL
+STOPSIGNAL SIGINT
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \

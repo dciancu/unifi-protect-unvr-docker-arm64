@@ -12,6 +12,7 @@ services:
       - ./storage/data:/data
       - ./storage/persistent:/persistent
     environment:
+      - container=docker
       - STORAGE_DISK=/dev/sda
       - TZ=UTC
     restart: unless-stopped

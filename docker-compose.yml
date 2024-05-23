@@ -8,9 +8,9 @@ services:
     cgroup: host
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ${PWD}/storage/srv:/srv
-      - ${PWD}/storage/data:/data
-      - ${PWD}/storage/persistent:/persistent
+      - ./storage/srv:/srv
+      - ./storage/data:/data
+      - ./storage/persistent:/persistent
     environment:
       - STORAGE_DISK=/dev/sda
       - TZ=UTC

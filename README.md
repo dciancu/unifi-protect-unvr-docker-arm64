@@ -20,6 +20,18 @@ Tags:
 Run the container using `docker compose` with the provided `docker-compose.yml`.  
 Make sure you have read the below section on [Issues running systemd inside docker](#issues-running-systemd-inside-docker).
 
+Create a new `docker-compose.override.yml` file and adjust below content for your configuration:
+```
+services:
+  unifi-protect:
+    environment:
+      - STORAGE_DISK=/dev/sda
+      - TZ=UTC
+```
+The `STORAGE_DISK` should point to your disk holding the storage folder volume (see `docker-compose.yml`).
+The `TZ` sets the timezone inside the container and is used by Protect for camera and events timestamp.
+Valid timezones inside the container are under `/usr/share/zoneinfo`.
+
 There is not output to `stdout`, and thus the `docker logs` of the container are empty.  
 You can check logs inside the container using `journalctl -f` and files in `/var/log`.
 

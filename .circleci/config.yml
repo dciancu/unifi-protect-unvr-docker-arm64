@@ -12,7 +12,7 @@ jobs:
             - setup_remote_docker:
                   docker_layer_caching: true
             - restore_cache:
-                  key: firmware
+                  key: firmware-
             - run:
                   name: Build Firmware
                   command: ./build-firmware.sh

@@ -11,5 +11,7 @@ if [[ -n "${CIRCLE_BRANCH+x}" ]] && [[ "$CIRCLE_BRANCH" == 'test' ]]; then
     docker push "${DOCKERHUB_IMAGE}:test-stable"
     docker push "${DOCKERHUB_IMAGE}:test-edge"
 else
+    docker rmi "${DOCKERHUB_IMAGE}:test-stable" || true
+    docker rmi "${DOCKERHUB_IMAGE}:test-edge" || true
     docker push --all-tags "$DOCKERHUB_IMAGE"
 fi

@@ -1,4 +1,4 @@
-FROM arm64v8/debian:11
+FROM arm64v8/debian:11 AS protect
 
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
@@ -73,13 +73,13 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get update \
     && apt-get -y --no-install-recommends install postgresql-14 postgresql-9.6
 
-COPY firmware-build/firmware/version /usr/lib/version
+COPY firmware/version /usr/lib/version
 COPY files/lib /lib/
 
 ARG UNVR_STABLE
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
-    --mount=type=bind,source=firmware-build/firmware/debs,target=/opt/debs \
-    --mount=type=bind,source=firmware-build/firmware/unifi-protect-deb,target=/opt/unifi-protect-deb \
+    --mount=type=bind,source=firmware/debs,target=/opt/debs \
+    --mount=type=bind,source=firmware/unifi-protect-deb,target=/opt/unifi-protect-deb \
     set -euo pipefail \
     && UNVR_STABLE="${UNVR_STABLE:-}" \
     && apt-get -y --no-install-recommends install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
@@ -101,7 +101,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && sed -i 's/rm -f/rm -rf/' /sbin/pg-cluster-upgrade \
     && sed -i 's/OLD_DB_CONFDIR=.*/OLD_DB_CONFDIR=\/etc\/postgresql\/9.6\/main/' /sbin/pg-cluster-upgrade \
     && touch /usr/bin/uled-ctrl \
-    && chmod +x /usr/bin/uled-ctrl
+    && chmod +x /usr/bin/uled-ctrl \
+    && chown root:root /etc/sudoers.d/*
 
 COPY files/sbin /sbin/
 COPY files/usr /usr/

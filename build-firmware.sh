@@ -3,7 +3,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(dirname "$0")"
-cd "${SCRIPT_DIR}/firmware-build"
+cd "$SCRIPT_DIR"
 
-docker build --no-cache --target firmware-build -t unvr-firmware .
-docker build --output=firmware --target=firmware .
+docker build -f firmware-base.Dockerfile -t unvr-firmware-base .
+docker build -f firmware.Dockerfile --no-cache -t unvr-firmware .
+rm -rf firmware/*
+docker build -f firmware-copy.Dockerfile --output firmware .

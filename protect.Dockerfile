@@ -29,8 +29,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         mdadm \
         iproute2 \
         ethtool \
-        procps \
-        systemd-timesyncd
+        procps
 
 # RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
 #     curl -sL https://deb.nodesource.com/setup_16.x | bash - \
@@ -56,7 +55,7 @@ RUN set -euo pipefail \
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
     && apt-get update \
-    && apt-get -y --no-install-recommends install systemd \
+    && apt-get -y --no-install-recommends install systemd systemd-timesyncd \
     && find /etc/systemd/system \
         /lib/systemd/system \
         -path '*.wants/*' \

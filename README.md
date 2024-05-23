@@ -37,13 +37,6 @@ services:
 `TZ` sets the timezone inside the container and is used by Protect for camera and events timestamp.  
 Valid timezones inside the container are under `/usr/share/zoneinfo`.
 
-### Logs
-
-There is not output to `stdout`, and thus the `docker logs` of the container are empty.  
-You can check logs inside the container using `journalctl -f` and files in `/var/log`.  
-`unifi-protect` logs are under `/srv/unifi-protect/logs`  
-`unifi-core` logs are under `/data/unifi-core/logs`
-
 ## Setup
 
 When you run the image for the first time, you have to go through the initial console setup, find the host IP address and
@@ -55,7 +48,14 @@ The auto-update does not work and may break the container.
 
 You can now proceed to add cameras to Protect.
 
-### Issues running Systemd inside Docker
+## Logs
+
+There is not output to `stdout`, and thus the `docker logs` of the container are empty.  
+You can check logs inside the container using `journalctl -f` and files in `/var/log`.  
+`unifi-protect` logs are under `/srv/unifi-protect/logs`  
+`unifi-core` logs are under `/data/unifi-core/logs`
+
+## Issues running Systemd inside Docker
 
 If you're getting the following error (or any systemd error):  
 Also check logs on the host when starting container.
@@ -69,12 +69,6 @@ Exiting PID 1...
 Boot the system with kernel parameter `systemd.unified_cgroup_hierarchy=0`
 
 See: https://github.com/moby/moby/issues/42275
-
-## Building
-
-Use the `build.sh` script.  
-This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com), inside a docker container.
-You can provide a custom `FW_URL` environment variable to download the firmware binary from a custom link.
 
 ## Issues with remote access
 
@@ -90,6 +84,17 @@ Name=enp0s2
 
 Make sure to update your network settings to reflect the new interface name.  
 To apply the settings, run `sudo update-initramfs -u` and reboot your host machine.
+
+## RTSP
+
+RTSP streams from Protect are available under camera settings > Advanced.  
+Remove `?enableSrtp` from the end and change to rtsp (port 7447) `rtsp://host-ip:7447/camera-id`.
+
+## Building
+
+Use the `build.sh` script.  
+This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com), inside a docker container.
+You can provide a custom `FW_URL` environment variable to download the firmware binary from a custom link.
 
 ## Acknowledgements
 

@@ -1,6 +1,7 @@
 services:
   unifi-protect:
     image: dciancu/unifi-protect-unvr-docker-arm64:stable
+    tty: true
     hostname: UNVR
     extra_hosts:
       - "UNVR:127.0.1.1"

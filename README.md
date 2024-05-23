@@ -10,7 +10,7 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 > Also remember to disable auto update of the console and applications in the console settings.
 
 > [!TIP]
-> Works on Raspberry Pi (tested with a Pi 4 model B 4GB)
+> Works on Raspberry Pi (tested with Pi 4 model B 4GB)
 
 ## Usage
 
@@ -22,6 +22,8 @@ Tags:
 
 Run the container using `docker compose` with the provided `docker-compose.yml`.  
 Make sure you have read the below section on [Issues running systemd inside docker](#issues-running-systemd-inside-docker).
+
+### Config
 
 Create a new `docker-compose.override.yml` file and adjust below content for your configuration:
 ```
@@ -35,8 +37,12 @@ services:
 `TZ` sets the timezone inside the container and is used by Protect for camera and events timestamp.  
 Valid timezones inside the container are under `/usr/share/zoneinfo`.
 
+### Logs
+
 There is not output to `stdout`, and thus the `docker logs` of the container are empty.  
-You can check logs inside the container using `journalctl -f` and files in `/var/log`.
+You can check logs inside the container using `journalctl -f` and files in `/var/log`.  
+`unifi-protect` logs are under `/srv/unifi-protect/logs`  
+`unifi-core` logs are under `/data/unifi-core/logs`
 
 ## Setup
 

@@ -29,7 +29,9 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         mdadm \
         iproute2 \
         ethtool \
-        procps
+        procps \
+        cron \
+        lvm2
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
@@ -94,7 +96,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && sed -i 's/redirectHostname: unifi//' /usr/share/unifi-core/app/config/default.yaml \
     && mv /sbin/mdadm /sbin/mdadm.orig \
     && mv /sbin/ubnt-tools /sbin/ubnt-tools.orig \
-    && systemctl enable storage_disk loop dbpermissions \
+    && systemctl enable storage_disk loop dbpermissions set_timezone \
     && pg_dropcluster --stop 9.6 main \
     && sed -i 's/rm -f/rm -rf/' /sbin/pg-cluster-upgrade \
     && sed -i 's/OLD_DB_CONFDIR=.*/OLD_DB_CONFDIR=\/etc\/postgresql\/9.6\/main/' /sbin/pg-cluster-upgrade \

@@ -1,0 +1,12 @@
+[Unit]
+Description=Set timezone
+Before=basic.target
+After=local-fs.target sysinit.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/set_timezone.sh
+
+[Install]
+WantedBy=basic.target

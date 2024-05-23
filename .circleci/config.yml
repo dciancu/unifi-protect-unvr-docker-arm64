@@ -18,7 +18,7 @@ jobs:
                   name: Build Firmware
                   command: ./build-firmware.sh
             - save_cache:
-                  key: firmware
+                  key: firmware-{{ checksum "firmware/version" }}
                   paths:
                       - firmware
             - run:

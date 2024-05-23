@@ -7,11 +7,10 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     set -euo pipefail \
     && apt-get update \
     && apt-get install -y apt-transport-https ca-certificates \
-    && sed -i 's/http:/https:/g' /etc/apt/sources.list
-
-RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
-    set -euo pipefail \
+    && sed -i 's/http:/https:/g' /etc/apt/sources.list \
     && apt-get update \
+    && apt-get upgrade -y \
+    && apt-get dist-upgrade -y \
     && apt-get -y --no-install-recommends install \
         vim \
         curl \
@@ -31,12 +30,9 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         ethtool \
         procps \
         cron \
-        lvm2
-
-RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
-    set -euo pipefail \
-    && apt-get update \
-    && apt-get -y --no-install-recommends install systemd systemd-timesyncd \
+        lvm2 \
+        systemd \
+        systemd-timesyncd \
     && find /etc/systemd/system \
         /lib/systemd/system \
         -path '*.wants/*' \

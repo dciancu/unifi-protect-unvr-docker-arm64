@@ -52,8 +52,8 @@ You can now proceed to add cameras to Protect.
 
 There is not output to `stdout`, and thus the `docker logs` of the container are empty.  
 You can check logs inside the container using `journalctl -f` and files in `/var/log`.  
-`unifi-protect` logs are under `/srv/unifi-protect/logs`  
-`unifi-core` logs are under `/data/unifi-core/logs`
+`unifi-protect` logs are in `/srv/unifi-protect/logs`  
+`unifi-core` logs are in `/data/unifi-core/logs`
 
 ## Issues running Systemd inside Docker
 

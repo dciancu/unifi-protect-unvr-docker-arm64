@@ -1,4 +1,5 @@
 FROM unvr-firmware-base AS firmware
+ARG ALL_DEBS
 ARG FW_URL
 ARG FW_UPDATE_URL='https://fw-update.ubnt.com/api/firmware?filter=eq~~platform~~unvr&filter=eq~~channel~~release&sort=-version&limit=10'
 ARG DEBIAN_FRONTEND=noninteractive
@@ -32,6 +33,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && while read pkg; do \
         dpkg-repack --root=../_fwupdate.bin.extracted/squashfs-root/ --arch=arm64 "$pkg"; \
     done < ../packages.txt \
+    && test -z "${ALL_DEBS:-}" || (mkdir ../all-debs && cp * ../all-debs/) \
     && mkdir ../debs \
     && cp ubnt-archive-keyring* unifi-core* ubnt-tools* ulp-go* unifi-assets-unvr* unifi-pion-gw* ../debs/ \
     && mkdir ../unifi-protect-deb \

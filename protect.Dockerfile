@@ -38,7 +38,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     set -euo pipefail \
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
         | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x nodistro main" \
+    && echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x nodistro main' \
         > /etc/apt/sources.list.d/nodesource.list \
     && apt-get -y update \
     && apt-get -y install -y --no-install-recommends nodejs
@@ -48,9 +48,17 @@ RUN set -euo pipefail \
         | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null \
     && echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/debian `lsb_release -cs` nginx" \
         | sudo tee /etc/apt/sources.list.d/nginx.list \
-    && echo "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
+    && echo 'Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n' \
         | sudo tee /etc/apt/preferences.d/99nginx \
     && cat /etc/apt/preferences.d/99nginx
+
+RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
+    set -euo pipefail \
+    && curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor \
+        | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
+    && echo "deb https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" > /etc/apt/sources.list.d/postgresql.list \
+    && apt-get update \
+    && apt-get -y --no-install-recommends install postgresql-14 postgresql-9.6
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
@@ -65,14 +73,6 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         -exec rm \{} \;
 STOPSIGNAL SIGINT
 
-RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
-    set -euo pipefail \
-    && curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor \
-        | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
-    && echo "deb https://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main" > /etc/apt/sources.list.d/postgresql.list \
-    && apt-get update \
-    && apt-get -y --no-install-recommends install postgresql-14 postgresql-9.6
-
 COPY firmware/version /usr/lib/version
 COPY files/lib /lib/
 
@@ -84,19 +84,18 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && UNVR_STABLE="${UNVR_STABLE:-}" \
     && apt-get -y --no-install-recommends install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
-    && chmod 644 /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
     && test ! -z "$UNVR_STABLE" || apt-get -y --no-install-recommends --force-yes \
-        -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
+        -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb unifi-protect \
     && test -z "$UNVR_STABLE" || apt-get -y --no-install-recommends --force-yes \
-        -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
+        -o Dpkg::Options::='--force-confdef" -o Dpkg::Options::="--force-confold' \
         install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb \
-    && echo "exit 0" > /usr/sbin/policy-rc.d \
+    && echo 'exit 0' > /usr/sbin/policy-rc.d \
     && sed -i 's/redirectHostname: unifi//' /usr/share/unifi-core/app/config/default.yaml \
     && mv /sbin/mdadm /sbin/mdadm.orig \
     && mv /usr/sbin/smartctl /usr/sbin/smartctl.orig \
-    && systemctl enable storage_disk dbpermissions\
+    && systemctl enable storage_disk dbpermissions \
     && pg_dropcluster --stop 9.6 main \
     && sed -i 's/rm -f/rm -rf/' /sbin/pg-cluster-upgrade \
     && sed -i 's/OLD_DB_CONFDIR=.*/OLD_DB_CONFDIR=\/etc\/postgresql\/9.6\/main/' /sbin/pg-cluster-upgrade \

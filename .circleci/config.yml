@@ -20,7 +20,7 @@ jobs:
             - save_cache:
                   key: firmware
                   paths:
-                      - firmware-build/firmware
+                      - firmware
             - run:
                   name: Build Protect
                   command: ./build-protect.sh

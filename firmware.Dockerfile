@@ -16,7 +16,11 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         wget --no-verbose --show-progress --progress=dot:giga -O fwupdate.bin -i - \
     && test -z "$FW_URL" || wget --no-verbose --show-progress --progress=dot:giga -O fwupdate.bin "$FW_URL" \
     && if test -f /opt/firmware/fwupdate.sha1 && sha1sum -c /opt/firmware/fwupdate.sha1; then \
-        rm fwupdate.bin && cp -r /opt/firmware/* . && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0) && exit 0; fi \
+        rm fwupdate.bin \
+        && cp -ar /opt/firmware/* . \
+        && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0) \
+        && exit 0; \
+    fi \
     && sha1sum fwupdate.bin > fwupdate.sha1 \
     && adduser --disabled-password --gecos '' build \
     && binwalk --run-as=build -e fwupdate.bin \
@@ -34,4 +38,4 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && cp unifi-protect* ../unifi-protect-deb/ \
     && cd .. \
     && rm -r _fwupdate.bin.extracted debs-build \
-    && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0) && exit 0
+    && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0)

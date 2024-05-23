@@ -38,4 +38,4 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && cp unifi-protect* ../unifi-protect-deb/ \
     && cd .. \
     && rm -r _fwupdate.bin.extracted debs-build \
-    && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0)
+    && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0) && exit 0

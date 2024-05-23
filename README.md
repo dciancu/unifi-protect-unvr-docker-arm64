@@ -9,6 +9,9 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 > break the container.  
 > Also remember to disable auto update of the console and applications in the console settings.
 
+> [!TIP]
+> Works on Raspberry Pi (tested with a Pi 4 model B 4GB)
+
 ## Usage
 
 Docker Hub Image: [dciancu/unifi-protect-unvr-docker-arm64](https://hub.docker.com/r/dciancu/unifi-protect-unvr-docker-arm64)  

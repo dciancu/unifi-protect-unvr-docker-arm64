@@ -51,6 +51,7 @@ You can now proceed to add cameras to Protect.
 ## Logs
 
 You can check logs using `docker compose logs -f` and files inside container at `/var/log`.  
+Inside the container you can check logs unsing `journalctl -f`.  
 `unifi-protect` logs are at `/srv/unifi-protect/logs`  
 `unifi-core` logs are at `/data/unifi-core/logs`
 

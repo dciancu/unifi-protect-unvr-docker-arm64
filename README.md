@@ -5,7 +5,7 @@
 Run UniFi Protect UNVR in Docker on ARM64 hardware.
 
 > [!IMPORTANT]
-> `latest` tag known issue Protect Setup - Page Not Found - see https://github.com/dciancu/unifi-protect-unvr-docker-arm64/issues/1
+> `edge` tag known issue Protect Setup - Page Not Found - see https://github.com/dciancu/unifi-protect-unvr-docker-arm64/issues/1
 
 > [!IMPORTANT]
 > Disconnect the docker host from the internet during the initial console setup, else it will auto update and may

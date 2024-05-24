@@ -6,7 +6,7 @@ services:
     extra_hosts:
       - "UNVR:127.0.1.1"
     container_name: unifi-protect
-    stop_grace_period: 1m30s
+    stop_grace_period: 2m
     cgroup: host
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup

@@ -99,7 +99,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && touch /usr/bin/uled-ctrl \
     && chmod +x /usr/bin/uled-ctrl \
     && chown root:root /etc/sudoers.d/* \
-    && echo -e '\nPGHOST=127.0.0.1\n' >> /etc/default/ulp-go
+    && echo -e '\n\nexport PGHOST=127.0.0.1\n' >> /usr/lib/ulp-go/scripts/envs.sh
 
 COPY files/sbin /sbin/
 COPY files/usr /usr/

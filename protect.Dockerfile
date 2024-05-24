@@ -98,7 +98,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && sed -i 's/OLD_DB_CONFDIR=.*/OLD_DB_CONFDIR=\/etc\/postgresql\/9.6\/main/' /sbin/pg-cluster-upgrade \
     && touch /usr/bin/uled-ctrl \
     && chmod +x /usr/bin/uled-ctrl \
-    && chown root:root /etc/sudoers.d/*
+    && chown root:root /etc/sudoers.d/* \
+    && echo -e '\nPGHOST=127.0.0.1\n' >> /etc/default/ulp-go
 
 COPY files/sbin /sbin/
 COPY files/usr /usr/

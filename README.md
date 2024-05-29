@@ -101,7 +101,7 @@ You can provide a custom `FW_URL` environment variable to download the firmware 
 
 ## Acknowledgements
 
-This project has been greatly inspired from the below projects.
+This project has been greatly inspired from below projects.
 
 [markdegrootnl/unifi-protect-arm64](https://github.com/markdegrootnl/unifi-protect-arm64) - original project  
 [Top-Cat/unifi-protect-arm64](https://github.com/Top-Cat/unifi-protect-arm64) - fork  

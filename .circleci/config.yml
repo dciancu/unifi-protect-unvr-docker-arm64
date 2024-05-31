@@ -28,4 +28,4 @@ jobs:
           command: ./publish.sh
       - run:
           name: Prune Docker Images
-          command: docker image prune
+          command: docker image prune -f

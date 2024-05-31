@@ -9,9 +9,9 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get install -y apt-transport-https ca-certificates \
     && sed -i 's/http:/https:/g' /etc/apt/sources.list \
     && apt-get update \
-    && apt-get upgrade -y \
-    && apt-get dist-upgrade -y \
-    && apt-get -y --no-install-recommends install \
+    && apt-get -y upgrade \
+    && apt-get -y dist-upgrade \
+    && apt-get --no-install-recommends -y install \
         vim \
         curl \
         wget \
@@ -50,8 +50,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg \
     && echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x nodistro main' \
         > /etc/apt/sources.list.d/nodesource.list \
-    && apt-get -y update \
-    && apt-get -y install -y --no-install-recommends nodejs
+    && apt-get update \
+    && apt-get --no-install-recommends -y install nodejs
 
 RUN set -euo pipefail \
     && curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
@@ -68,7 +68,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
     && echo "deb https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" > /etc/apt/sources.list.d/postgresql.list \
     && apt-get update \
-    && apt-get -y --no-install-recommends install postgresql-14 postgresql-9.6
+    && apt-get --no-install-recommends -y install postgresql-14 postgresql-9.6
 
 COPY firmware/version /usr/lib/version
 COPY files/lib /lib/
@@ -79,7 +79,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     --mount=type=bind,source=firmware/unifi-protect-deb,target=/opt/unifi-protect-deb \
     set -euo pipefail \
     && UNVR_STABLE="${UNVR_STABLE:-}" \
-    && apt-get -y --no-install-recommends install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
+    && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
     && test ! -z "$UNVR_STABLE" || apt-get -y --no-install-recommends --force-yes \

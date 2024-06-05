@@ -61,8 +61,8 @@ Inside the container you can check logs unsing `journalctl -f`.
 
 ## Issues running Systemd inside Docker
 
-If you're getting the following error (or any systemd error):  
-Also check logs on the host when starting container.
+If you're getting the following error or any `systemd` error when starting container:  
+Also check logs on host when starting container.
 ```
 Failed to create /init.scope control group: Read-only file system
 Failed to allocate manager object: Read-only file system
@@ -70,7 +70,9 @@ Failed to allocate manager object: Read-only file system
 Exiting PID 1...
 ```
 
-Boot the system with kernel parameter `systemd.unified_cgroup_hierarchy=0`
+Boot the host system with kernel parameter `systemd.unified_cgroup_hierarchy=0`.
+
+Also, not output when running `doker compose logs` means most likely it is due to the above error.
 
 See: https://github.com/moby/moby/issues/42275
 

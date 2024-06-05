@@ -10,10 +10,11 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 > [!IMPORTANT]
 > Disconnect the docker host from the internet during the initial console setup, else it will auto update and may
 > break the container.  
-> Also remember to disable auto update of the console and applications in the console settings.
+> Also remember to disable auto update of the console and applications in the console settings.  
+> Make sure you have read the below section on [Issues running systemd inside docker](#issues-running-systemd-inside-docker).
 
 > [!TIP]
-> Works on Raspberry Pi (tested with Pi 4 model B 4GB)
+> Works on Raspberry Pi (tested with Pi 4 model B 4GB on Debian 12 Bookworm)
 
 ## Usage
 

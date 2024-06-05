@@ -1,13 +1,14 @@
 [Unit]
 Description=Fix hosts
 Before=basic.target
-After=local-fs.target sysinit.target unifi-core.service
+After=local-fs.target sysinit.target
 DefaultDependencies=no
 
 [Service]
-Type=oneshot
+Type=simple
+Restart=always
+RestartSec=10
 ExecStart=/usr/sbin/fix_hosts.sh
 
 [Install]
 WantedBy=basic.target
-RequiredBy=ulp.service

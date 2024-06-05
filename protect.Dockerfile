@@ -13,6 +13,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get -y dist-upgrade \
     && apt-get --no-install-recommends -y install \
         vim \
+        inotify-tools # used by fix_hosts.sh script \
         curl \
         wget \
         mount \

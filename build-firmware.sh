@@ -6,7 +6,7 @@ SCRIPT_DIR="$(dirname "$0")"
 cd "$SCRIPT_DIR"
 
 docker build -f firmware-base.Dockerfile -t unvr-firmware-base --pull .
-docker build -f firmware.Dockerfile --no-cache -t unvr-firmware .
+docker build -f firmware.Dockerfile --no-cache -t unvr-firmware --build-arg "FW_URL=${FW_URL:-}" .
 if [ -f firmware/version ]; then
     rm -r firmware/*
 fi

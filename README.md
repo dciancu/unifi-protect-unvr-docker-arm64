@@ -36,7 +36,7 @@ services:
 ```
 `STORAGE_DISK` should point to your disk holding the storage folder volume (see `docker-compose.yml`).  
 `TZ` sets the timezone inside the container and is used by Protect for camera and events timestamp, be sure to set the same value in console settings.  
-Valid timezones inside the container are under `/usr/share/zoneinfo`.
+Valid timezones inside the container are at `/usr/share/zoneinfo`.
 
 ## Setup
 

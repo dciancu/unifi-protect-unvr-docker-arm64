@@ -5,13 +5,15 @@ set -euo pipefail
 SCRIPT_DIR="$(dirname "$0")"
 cd "$SCRIPT_DIR"
 
-echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+echo "$DOCKER_PASS" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+image_name="${DOCKER_IMAGE:-dciancu/unifi-protect-unvr-docker-arm64}"
 
 if [[ -n "${CIRCLE_BRANCH+x}" ]] && [[ "$CIRCLE_BRANCH" == 'test' ]]; then
-    docker push "${DOCKERHUB_IMAGE}:test-stable"
-    docker push "${DOCKERHUB_IMAGE}:test-edge"
+    docker push "${image_name}:test-stable"
+    docker push "${image_name}:test-edge"
 else
-    docker rmi "${DOCKERHUB_IMAGE}:test-stable" || true
-    docker rmi "${DOCKERHUB_IMAGE}:test-edge" || true
-    docker push --all-tags "$DOCKERHUB_IMAGE"
+    docker rmi "${image_name}:test-stable" || true
+    docker rmi "${image_name}:test-edge" || true
+    docker push --all-tags "$image_name"
 fi

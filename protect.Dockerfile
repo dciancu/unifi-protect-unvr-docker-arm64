@@ -11,6 +11,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get update \
     && apt-get -y upgrade \
     && apt-get -y dist-upgrade \
+    && apt-get --purge autoremove -y \
     # inotify-tools is used by fix_hosts.sh script \
     && apt-get --no-install-recommends -y install \
         vim \

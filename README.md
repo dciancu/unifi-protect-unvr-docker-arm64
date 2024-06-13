@@ -99,8 +99,9 @@ Remove `?enableSrtp` from the end and change to rtsp (port 7447) `rtsp://host-ip
 ## Building
 
 Use the `build.sh` script.  
-This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com), inside a docker container.
-You can provide a custom `FW_URL` environment variable to download the firmware binary from a custom link.
+This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com), inside a docker container.  
+You can provide a custom `FW_URL` environment variable to download the firmware binary from a custom link.  
+Set `DOCKER_IMAGE` environment variable to use a custom image tag.
 
 ## Acknowledgements
 

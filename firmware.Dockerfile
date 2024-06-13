@@ -11,6 +11,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get update \
     && apt-get upgrade -y \
     && apt-get dist-upgrade -y \
+    && apt-get --purge autoremove -y \
     && mkdir -p /opt/firmware-build && cd /opt/firmware-build \
     && test ! -z "$FW_URL" || wget -q --output-document - "$FW_UPDATE_URL" | \
         jq -r '._embedded.firmware | map(select(.probability_computed == 1))[0] | ._links.data.href' | \

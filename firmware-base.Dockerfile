@@ -9,4 +9,5 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get update \
     && apt-get upgrade -y \
     && apt-get dist-upgrade -y \
+    && apt-get --purge autoremove -y \
     && apt-get install -y wget jq binwalk dpkg-repack

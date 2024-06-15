@@ -1,2 +1,2 @@
-storage/
+/storage
 docker-compose.override.yml

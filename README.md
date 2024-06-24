@@ -69,7 +69,7 @@ Exiting PID 1...
 
 Boot the host system with kernel parameter `systemd.unified_cgroup_hierarchy=0`.
 
-Also, not output when running `doker compose logs` means most likely it is due to the above error.
+Also, no output when running `doker compose logs` means most likely it is due to the above error.
 
 See: https://github.com/moby/moby/issues/42275
 

@@ -85,9 +85,11 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
+    # UNVR_STABLE not set
     && test ! -z "$UNVR_STABLE" || apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb unifi-protect \
+    # UNVR_STABLE set
     && test -z "$UNVR_STABLE" || apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb \

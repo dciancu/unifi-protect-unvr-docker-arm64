@@ -13,7 +13,7 @@ if [[ -n "${CIRCLE_BRANCH+x}" ]] && [[ "$CIRCLE_BRANCH" == 'test' ]]; then
 else
     if [[ -n "${CIRCLE_BRANCH+x}" ]] && [[ "$CIRCLE_BRANCH" == 'build' ]]; then
         docker images | grep "$image_name" | tr -s ' ' | cut -d ' ' -f 2 \
-            | xargs -I {} docker rmi "${image_name}:{}" || true
+            | xargs -I {} docker rmi -f "${image_name}:{}" || true
         docker buildx prune -f
     fi
 

@@ -24,7 +24,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         && exit 0; \
     fi \
     && sha1sum fwupdate.bin > fwupdate.sha1 \
-    && adduser --disabled-password --gecos '' build \
+    && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login build \
     && binwalk --run-as=build -e fwupdate.bin \
     && rm fwupdate.bin \
     && cp _fwupdate.bin.extracted/squashfs-root/usr/lib/version . \

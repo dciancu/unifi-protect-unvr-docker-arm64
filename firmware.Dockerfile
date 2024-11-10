@@ -36,7 +36,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     done < ../packages.txt \
     && test -z "${ALL_DEBS:-}" || (mkdir ../all-debs && cp * ../all-debs/) \
     && mkdir ../debs \
-    && cp ubnt-archive-keyring* unifi-core* ubnt-tools* ulp-go* unifi-assets-unvr* unifi-pion-gw* ../debs/ \
+    && cp ubnt-archive-keyring* unifi-core* ubnt-tools* ulp-go* unifi-assets-unvr* ../debs/ \
     && mkdir ../unifi-protect-deb \
     && cp unifi-protect* ../unifi-protect-deb/ \
     && cd .. \

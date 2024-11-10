@@ -17,9 +17,10 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 
 Docker Hub Image: [dciancu/unifi-protect-unvr-docker-arm64](https://hub.docker.com/r/dciancu/unifi-protect-unvr-docker-arm64)  
 Tags:
-- **`stable - recommended`**, uses unifi-protect version packaged in UNVR firmware
-- `edge` - uses latest unifi-protect version (may not always work)
-- `specific version` - uses unifi-protect version packaged in UNVR firmware (this is an alias for each stable release)
+- **`stable - recommended`**, uses Protect version packaged in UNVR firmware
+- `edge` - uses latest Protect version (may not always work)
+- `Firmware (UniFi OS) specific version` - uses Protect version packaged in UNVR firmware (alias of stable tag)
+- `Protect specific version` - alias of stable and edge tags with Protect version
 
 Run the container using `docker compose` with the provided `docker-compose.yml`.  
 Make sure you have read the below section on [Issues running systemd inside docker](#issues-running-systemd-inside-docker).

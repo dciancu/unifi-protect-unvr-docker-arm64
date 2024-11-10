@@ -17,8 +17,17 @@ else
         docker buildx prune -f
     fi
 
-    version="$(tr -d '\n' < firmware/version)"
+    firmware_version="$(tr -d '\n' < firmware/version)"
     docker build -f protect.Dockerfile --build-arg UNVR_STABLE=1 -t "${image_name}:stable" --pull .
-    docker tag "${image_name}:stable" "${image_name}:${version}"
+    docker tag "${image_name}:stable" "${image_name}:${firmware_version}"
+    version="$(docker run "${image_name}:stable" dpkg -s unifi-protect | grep '^Version:' | cut -d ' ' -f 2 | tr -d '\n')"
+    docker tag "${image_name}:stable" "${image_name}:v${version}"
+    docker tag "${image_name}:stable" "${image_name}:v$(cut -d '.' -f 1-2 <<< "$version")"
+    docker tag "${image_name}:stable" "${image_name}:v$(cut -d '.' -f 1 <<< "$version")"
+
     docker build -f protect.Dockerfile -t "${image_name}:edge" .
+    version="$(docker run "${image_name}:edge" dpkg -s unifi-protect | grep '^Version:' | cut -d ' ' -f 2 | tr -d '\n')"
+    docker tag "${image_name}:edge" "${image_name}:v${version}"
+    docker tag "${image_name}:edge" "${image_name}:v$(cut -d '.' -f 1-2 <<< "$version")"
+    docker tag "${image_name}:edge" "${image_name}:v$(cut -d '.' -f 1 <<< "$version")"
 fi

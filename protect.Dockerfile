@@ -44,18 +44,6 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         -not -name '*systemd-user-sessions*' \
         -exec rm \{} \;
 
-# RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
-#     curl -sL https://deb.nodesource.com/setup_16.x | bash - \
-#     && apt-get install -y --no-install-recommends nodejs
-RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
-    set -euo pipefail \
-    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
-        | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg \
-    && echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x nodistro main' \
-        > /etc/apt/sources.list.d/nodesource.list \
-    && apt-get update \
-    && apt-get --no-install-recommends -y install nodejs
-
 RUN set -euo pipefail \
     && curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
         | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null \

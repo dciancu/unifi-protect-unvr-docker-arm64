@@ -34,7 +34,7 @@ services:
     environment:
       - STORAGE_DISK=/dev/sda
       - TZ=UTC
-# Set DEBUG mode to enable storage disk operations logging
+# Set DEBUG mode to enable storage disk operations logging.
 #      - DEBUG=true
 # If needed to mount device inside container.
 #    devices:

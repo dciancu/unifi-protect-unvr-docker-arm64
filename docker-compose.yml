@@ -17,6 +17,7 @@ services:
       - container=docker
       - STORAGE_DISK=/dev/sda
       - TZ=UTC
+      - DEBUG=false
     restart: unless-stopped
     cap_add:
       - dac_read_search

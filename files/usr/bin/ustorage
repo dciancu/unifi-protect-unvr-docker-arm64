@@ -8,7 +8,7 @@ sused=$(df -B1 --output=used ${disk} | awk 'NR==2 {print $1}')
 
 case $1 in
     disk)
-	cat <<EOT
+        cat <<EOT
 [
     {
         "action": "none",
@@ -56,9 +56,9 @@ case $1 in
     }
 ]
 EOT
-	;;
+    ;;
     space)
-	cat <<EOT
+        cat <<EOT
 [
     {
         "action": "none",
@@ -73,13 +73,24 @@ EOT
     }
 ]
 EOT
-	;;
- config)
-	cat <<EOT
+    ;;
+    config)
+        if [ "$2" = 'show' ]; then
+            cat <<EOT
 {
     "hotspare": false,
     "raid": "raid1"
 }
 EOT
-
+        fi
+    ;;
+    rwfs)
+        if [ "$2" = 'check' ]; then
+            cat <<EOT
+{
+    "isMigrated": false,
+    "migratable": {"canMigrate": false, "reason": "not-support"}
+}
+EOT
+        fi
 esac

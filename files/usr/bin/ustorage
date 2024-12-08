@@ -8,7 +8,8 @@ sused=$(df -B1 --output=used ${disk} | awk 'NR==2 {print $1}')
 
 case "${1:-}" in
     disk)
-        cat <<EOT
+        if [ "${2:-}" = 'inspect' ]; then
+            cat <<EOT
 [
     {
         "action": "none",
@@ -56,9 +57,11 @@ case "${1:-}" in
     }
 ]
 EOT
+        fi
     ;;
     space)
-        cat <<EOT
+        if [ "${2:-}" = 'inspect' ]; then
+            cat <<EOT
 [
     {
         "action": "none",
@@ -73,6 +76,7 @@ EOT
     }
 ]
 EOT
+        fi
     ;;
     config)
         if [ "${2:-}" = 'show' ]; then

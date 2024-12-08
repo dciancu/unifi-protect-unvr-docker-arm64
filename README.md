@@ -8,14 +8,14 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 > Disconnect the docker host from the internet during the initial console setup, else it will auto update and may
 > break the container.  
 > Also remember to disable auto update of the console and applications in the console settings.  
-> Make sure you have read the below section on [Issues running systemd inside docker](#issues-running-systemd-inside-docker).
+> Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).
 
 > [!TIP]
 > Works on Raspberry Pi (tested with Pi 4 model B 4GB on Debian 12 Bookworm)
 
 ## Usage
 
-Docker Hub Image: [dciancu/unifi-protect-unvr-docker-arm64](https://hub.docker.com/r/dciancu/unifi-protect-unvr-docker-arm64)  
+**Docker Hub Image: [dciancu/unifi-protect-unvr-docker-arm64](https://hub.docker.com/r/dciancu/unifi-protect-unvr-docker-arm64)**  
 Tags:
 - **`stable - recommended`**, uses Protect version packaged in UNVR firmware
 - `edge` - uses latest Protect version (may not always work)
@@ -23,7 +23,7 @@ Tags:
 - `Protect specific version` - alias of stable and edge tags with Protect version
 
 Run the container using `docker compose` with the provided `docker-compose.yml`.  
-Make sure you have read the below section on [Issues running systemd inside docker](#issues-running-systemd-inside-docker).
+**Make sure you have read the below section on [Issues running systemd inside docker](#issues-running-systemd-inside-docker).**
 
 ### Config
 
@@ -34,12 +34,17 @@ services:
     environment:
       - STORAGE_DISK=/dev/sda
       - TZ=UTC
+# If needed to mount device inside container.
+#    devices:
+#      - /dev/sda:/dev/sda
 ```
-`STORAGE_DISK` should point to your disk holding the storage folder volume (see `docker-compose.yml`).  
-`TZ` sets the timezone inside the container and is used by Protect for camera and events timestamp, be sure to set the same value in console settings.  
-Valid timezones inside the container are at `/usr/share/zoneinfo`.
+`STORAGE_DISK` should point to your disk holding the `storage` folder volume (see `docker-compose.yml`). **Make sure you have access to the device inside the container**, or mount it using `devices` key in `docker-compose.override.yml`.  
+`TZ` sets the timezone inside the container and is used by Protect for camera and events timestamp, be sure to set the same value in console settings. Valid timezones inside the container are at `/usr/share/zoneinfo`.
 
 ## Setup
+
+> [!IMPORTANT]
+> Protect requires `IPv6` enabled (even if blocked by firewall or not routed) and make sure ports used by Protect are not in use by other services/images (`80`, `443` etc.).
 
 When you run the image for the first time, you have to go through the initial console setup, find the host IP address and
 navigate to `http://host-ip`.  
@@ -53,7 +58,7 @@ You can now proceed to add cameras to Protect.
 ## Logs
 
 You can check logs using `docker compose logs -f` and files inside container at `/var/log`.  
-Inside the container you can check logs unsing `journalctl -f`.  
+Inside the container you can check logs using `journalctl -f`.  
 `unifi-protect` logs are at `/srv/unifi-protect/logs`  
 `unifi-core` logs are at `/data/unifi-core/logs`
 
@@ -76,6 +81,10 @@ See: https://github.com/moby/moby/issues/42275
 
 ## Issues with remote access
 
+> [!CAUTION]
+> Make sure to update your network settings (**including your firewall rules**) to reflect the new interface name or you will lose internet connectivity. This is typically in `/etc/network/interfaces`.  
+> If you are using NetworkManager service on host, then this does not apply, as your new interface will be configured using DHCP automatically, but your firewall rules may still need updating.
+
 There is a known issue that remote access to your UNVR (via the Ubnt cloud) will not work with the console unless the primary network interface is named `enp0s2`. To achieve this, **on your host machine** create the file `/etc/systemd/network/98-enp0s2.link` with the content below, replacing `xx:xx:xx:xx:xx:xx` with your actual MAC address.
 
 ```
@@ -86,7 +95,7 @@ MACAddress=xx:xx:xx:xx:xx:xx
 Name=enp0s2
 ```
 
-Make sure to update your network settings to reflect the new interface name.  
+**Make sure to update your network settings and your firewall rules to reflect the new interface name.**  
 To apply the settings, run `sudo update-initramfs -u` and reboot your host machine.
 
 ## RTSP

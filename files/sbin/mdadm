@@ -2,10 +2,9 @@
 
 source /etc/default/storage_disk
 disk="${STORAGE_DISK:-/dev/sda1}"
-
-sbytes=$(df -B1 --output=size ${disk} | awk 'NR==2 {print $1}')
-sgb=$(df -B1GB --output=size ${disk} | awk 'NR==2 {print $1}')
-sgib=$(df -B1G --output=size ${disk} | awk 'NR==2 {print $1}')
+sbytes=$(df -B1 --output=size /srv | awk 'NR==2 {print $1}')
+sgb=$(df -B1GB --output=size /srv | awk 'NR==2 {print $1}')
+sgib=$(df -B1G --output=size /srv | awk 'NR==2 {print $1}')
 
 if [ "${1:-}" = '/dev/md3' ] || [ "${2:-}" = '/dev/md3' ]; then
     cat << EOF

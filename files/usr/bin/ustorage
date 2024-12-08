@@ -3,8 +3,10 @@
 source /etc/default/storage_disk
 disk="${STORAGE_DISK:-/dev/sda1}"
 device=$(basename ${disk})
-sbytes=$(df -B1 --output=size ${disk} | awk 'NR==2 {print $1}')
-sused=$(df -B1 --output=used ${disk} | awk 'NR==2 {print $1}')
+sbytes=$(df -B1 --output=size -k /srv | awk 'NR==2 {print $1}')
+sbytes=$(( sbytes * 1024 ))
+sused=$(df -B1 --output=used -k /srv | awk 'NR==2 {print $1}')
+sused=$(( sused * 1024 ))
 
 case $1 in
     disk)
@@ -14,6 +16,7 @@ case $1 in
         "action": "none",
         "ata": "ATA8-ACS",
         "bad_sector": 0,
+        "error_log_count": 0,
         "estimate": null,
         "firmware": "AX001Q",
         "healthy": "good",
@@ -21,38 +24,19 @@ case $1 in
         "model": "UniFi Protect fake disk",
         "poweronhrs": 1,
         "progress": null,
+        "read_error": 0,
         "reason": null,
         "rpm": 5400,
         "sata": "SATA 3",
         "serial": "X0JNP396T",
         "size": ${sbytes},
         "slot": 1,
+        "smart_error_count": 0,
         "state": "normal",
         "temperature": 49,
         "threshold": 10,
-        "type": "HDD"
-    },
-    {
-        "action": "none",
-        "ata": "ATA8-ACS",
-        "bad_sector": 0,
-        "estimate": null,
-        "firmware": "AX001Q",
-        "healthy": "good",
-        "life_span": 100,
-        "model": "UniFi Protect fake disk 2",
-        "poweronhrs": 1,
-        "progress": null,
-        "reason": null,
-        "rpm": 5400,
-        "sata": "SATA 3",
-        "serial": "X0JNP397T",
-        "size": ${sbytes},
-        "slot": 2,
-        "state": "normal",
-        "temperature": 49,
-        "threshold": 10,
-        "type": "HDD"
+        "type": "HDD",
+        "unc_count": 0
     }
 ]
 EOT
@@ -63,10 +47,13 @@ EOT
     {
         "action": "none",
         "device": "${device}",
+        "errors_count": 0,
         "estimate": 0,
         "health": "health",
         "progress": null,
+        "raid": null,
         "reasons": [],
+        "resv_bytes": 0,
         "space_type": "primary",
         "total_bytes": ${sbytes},
         "used_bytes": ${sused}

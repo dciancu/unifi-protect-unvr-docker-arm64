@@ -6,7 +6,7 @@ device=$(basename ${disk})
 sbytes=$(df -B1 --output=size ${disk} | awk 'NR==2 {print $1}')
 sused=$(df -B1 --output=used ${disk} | awk 'NR==2 {print $1}')
 
-case $1 in
+case "${1:-}" in
     disk)
         cat <<EOT
 [
@@ -75,7 +75,7 @@ EOT
 EOT
     ;;
     config)
-        if [ "$2" = 'show' ]; then
+        if [ "${2:-}" = 'show' ]; then
             cat <<EOT
 {
     "hotspare": false,
@@ -85,7 +85,7 @@ EOT
         fi
     ;;
     rwfs)
-        if [ "$2" = 'check' ]; then
+        if [ "${2:-}" = 'check' ]; then
             cat <<EOT
 {
     "isMigrated": false,

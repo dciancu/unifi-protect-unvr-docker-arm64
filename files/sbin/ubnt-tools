@@ -1,7 +1,6 @@
 #!/bin/bash
 
-if [ "$1" == "id" ]; then
-
+if [ "${1:-}" = 'id' ]; then
     if [ ! -f /data/uuid.txt ]; then
         cat /proc/sys/kernel/random/uuid > /data/uuid.txt
     fi
@@ -17,9 +16,15 @@ if [ "$1" == "id" ]; then
     # echo "board.sysid=0xea20" # UNVR_PRO
     # echo "board.sysid=0xffff" # MAC_OS
 
-    echo "board.uuid=$uuid"
     echo "board.name=UniFi Network Video Recorder"
     echo "board.shortname=UNVR"
+    echo "board.subtype="
+    echo "board.reboot=30"
+    echo "board.upgrade=310"
+    echo "board.cpu.id=00000000-00000000"
+    echo "board.uuid=${uuid}"
+    echo "board.bom=1"
     echo "board.hwrev=1"
-    echo "board.serialno=$serial"
+    echo "board.serialno=${serial}"
+    echo "board.qrid=sTpBUR"
 fi

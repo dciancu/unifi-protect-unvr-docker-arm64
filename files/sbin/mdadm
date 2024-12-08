@@ -7,7 +7,8 @@ sbytes=$(df -B1 --output=size ${disk} | awk 'NR==2 {print $1}')
 sgb=$(df -B1GB --output=size ${disk} | awk 'NR==2 {print $1}')
 sgib=$(df -B1G --output=size ${disk} | awk 'NR==2 {print $1}')
 
-cat << EOF
+if [ "${1:-}" = '/dev/md3' ] || [ "${2:-}" = '/dev/md3' ]; then
+    cat << EOF
 /dev/md3:
         Version : 1.2
   Creation Time : Fri Feb  7 18:44:50 2020
@@ -33,3 +34,4 @@ Working Devices : 1
     Number   Major   Minor   RaidDevice State
        0       8        16        0      active sync   ${disk}
 EOF
+fi

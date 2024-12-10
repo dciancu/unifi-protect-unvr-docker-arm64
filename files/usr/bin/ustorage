@@ -2,7 +2,7 @@
 
 source /etc/default/storage_disk
 disk="${STORAGE_DISK:-/dev/sda1}"
-device=$(basename ${disk})
+device=$(basename "${disk}")
 sbytes=$(df -B1 --output=size /srv | awk 'NR==2 {print $1}')
 sused=$(df -B1 --output=used /srv | awk 'NR==2 {print $1}')
 

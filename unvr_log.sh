@@ -21,7 +21,8 @@ USTORAGE_PATH="$(which ustorage)"
 if [ "$1" = 'on' ]; then
     cp -a "$USTORAGE_PATH" "${USTORAGE_PATH}.bak"
     mv "$USTORAGE_PATH" "${USTORAGE_PATH}.orig"
-    echo 'echo "$0" "$@" >> /var/log/storage_disk_debug.log' > "$USTORAGE_PATH"
+    echo '#!/bin/bash' > "$USTORAGE_PATH"
+    echo 'echo "$0" "$@" >> /var/log/storage_disk_debug.log' >> "$USTORAGE_PATH"
     echo "${USTORAGE_PATH}.orig" '$@' >> "$USTORAGE_PATH"
     chmod +x "$USTORAGE_PATH"
 elif [ "$1" = 'off' ]; then

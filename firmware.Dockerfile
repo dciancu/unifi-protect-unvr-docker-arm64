@@ -30,6 +30,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && cp _fwupdate.bin.extracted/squashfs-root/usr/lib/version . \
     && dpkg-query --admindir=_fwupdate.bin.extracted/squashfs-root/var/lib/dpkg/ -W -f='${package} | ${Maintainer}\n' | \
         grep -E '@ubnt.com|@ui.com' | cut -d '|' -f 1 > packages.txt \
+    && cat packages.txt \
     && mkdir debs-build && cd debs-build \
     && while read pkg; do \
         dpkg-repack --root=../_fwupdate.bin.extracted/squashfs-root/ --arch=arm64 "$pkg"; \

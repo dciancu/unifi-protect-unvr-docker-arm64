@@ -17,13 +17,13 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         jq -r '._embedded.firmware | map(select(.probability_computed == 1))[0] | ._links.data.href' | \
         wget --no-verbose --show-progress --progress=dot:giga -O fwupdate.bin -i - \
     && test -z "$FW_URL" || wget --no-verbose --show-progress --progress=dot:giga -O fwupdate.bin "$FW_URL" \
-    && if test -f /opt/firmware/fwupdate.sha1 && sha1sum -c /opt/firmware/fwupdate.sha1; then \
+    && if test -f /opt/firmware/fwupdate.sha1 && cat /opt/firmware/fwupdate.sha1 && sha1sum -c /opt/firmware/fwupdate.sha1; then \
         rm fwupdate.bin \
         && cp -a /opt/firmware/* . \
         && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0) \
         && exit 0; \
     fi \
-    && sha1sum fwupdate.bin > fwupdate.sha1 \
+    && sha1sum fwupdate.bin | tee fwupdate.sha1 \
     && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login build \
     && binwalk --run-as=build -e fwupdate.bin \
     && rm fwupdate.bin \

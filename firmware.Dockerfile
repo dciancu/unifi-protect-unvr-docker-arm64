@@ -20,7 +20,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && if test -f /opt/firmware/fwupdate.sha1 && cat /opt/firmware/fwupdate.sha1 && sha1sum -c /opt/firmware/fwupdate.sha1; then \
         rm fwupdate.bin \
         && cp -a /opt/firmware/* . \
-        && ls -lh \
+        && ls -lhR \
         && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0) \
         && exit 0; \
     fi \

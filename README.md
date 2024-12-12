@@ -34,7 +34,6 @@ services:
   unifi-protect:
     environment:
       - STORAGE_DISK=/dev/sda
-      - TZ=UTC
 # Set DEBUG mode to enable storage disk operations logging.
 #      - DEBUG=true
 # If needed to mount device inside container.
@@ -42,7 +41,6 @@ services:
 #      - /dev/sda:/dev/sda
 ```
 `STORAGE_DISK` should point to your disk holding the `storage` folder volume (see `docker-compose.yml`). **Make sure you have access to the device inside the container**, or mount it using `devices` key in `docker-compose.override.yml`.  
-`TZ` sets the timezone inside the container and is used by Protect for camera and events timestamp, be sure to set the same value in console settings. Valid timezones inside the container are at `/usr/share/zoneinfo`.
 
 ## Setup
 

@@ -13,6 +13,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get -y dist-upgrade \
     && apt-get --purge autoremove -y \
     # inotify-tools is used by fix_hosts.sh script \
+    # net-tools (arp command) is needed by Protect to adopt ONVIF cameras \
     && apt-get --no-install-recommends -y install \
         vim \
         inotify-tools \
@@ -37,6 +38,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         systemd \
         systemd-timesyncd \
         sysstat \
+        net-tools \
     && find /etc/systemd/system \
         /lib/systemd/system \
         -path '*.wants/*' \

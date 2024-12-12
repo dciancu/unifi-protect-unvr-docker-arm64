@@ -11,7 +11,8 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 > Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).
 
 > [!TIP]
-> Works on Raspberry Pi (tested with Pi 4 model B 4GB on Debian 12 Bookworm)
+> Works on Raspberry Pi (tested with Pi 4 model B 4GB on Debian 12 Bookworm).  
+> Protect 5.0 added support for third-party cameras via ONVIF, [see here](https://help.ui.com/hc/en-us/articles/26301104828439-Third-Party-Cameras-in-UniFi-Protect).
 
 ## Usage
 

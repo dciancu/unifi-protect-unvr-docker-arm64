@@ -8,7 +8,8 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 > Disconnect the docker host from the internet during the initial console setup, else it will auto update and may
 > break the container.  
 > Also remember to disable auto update of the console and applications in the console settings.  
-> Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).
+> Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).  
+> It is recommended to only run Protect with no other services/images when running on limited hardware (like Raspberry Pi).
 
 > [!TIP]
 > Works on Raspberry Pi (tested with Pi 4 model B 4GB on Debian 12 Bookworm).  
@@ -42,10 +43,22 @@ services:
 ```
 `STORAGE_DISK` should point to your disk holding the `storage` folder volume (see `docker-compose.yml`). **Make sure you have access to the device inside the container**, or mount it using `devices` key in `docker-compose.override.yml`.  
 
-## Setup
+### Network
 
 > [!IMPORTANT]
-> Protect requires `IPv6` enabled (even if blocked by firewall or not routed) and make sure ports used by Protect are not in use by other services/images (`80`, `443` etc.).
+> Protect requires `IPv6` enabled (even if blocked by firewall or not routed) and make sure ports used by Protect are not in use by other services/images (`80`, `443` etc.).  
+
+Real UNVR has 2 network interfaces (`enp0s1` and `enp0s2`), if you mask your real network interface with `enp0s2` (see [Issues with remote access](#issues-with-remote-access)), then you only need to add `enp0s1`. For Debian, Ubuntu and other alike you can add a dummy interface with `ip link add enp0s1 type dummy`, and to be persistent across reboots, add to host network config at `/etc/network/interfaces`:
+```
+auto enp0s1
+iface enp0s1 inet manual
+    pre-up ip link add enp0s1 type dummy
+    post-down ip link del enp0s1
+```
+Although this may not be needed and Protect may work and not give errors, the `ubnt-systool` network speed info will return an error when queried by Protect. It is not yet clear how or if this error influences Protect.  
+This further helps mimic the UNVR hardware which Protect expects to be running on.
+
+## Setup
 
 When you run the image for the first time, you have to go through the initial console setup, find the host IP address and
 navigate to `http://host-ip`.  

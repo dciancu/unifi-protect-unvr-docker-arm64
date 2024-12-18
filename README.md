@@ -112,6 +112,8 @@ Name=enp0s2
 **Make sure to update your network settings and your firewall rules to reflect the new interface name.**  
 To apply the settings, run `sudo update-initramfs -u` and reboot your host machine.
 
+I have also discovered that **direct remote access via the app** (without remote access enabled via Ubnt cloud, or being signed to UI account in the app) requires Protect to have access to `https://static.ui.com` in order to download MAC fingerprints, else you will run into a connection failed issue and will have to hit try again button a few times before you can connect directly and also your console may be displayed offline in the app. So for direct remote access to work correctly in the app, make sure Protect can access `https://static.ui.com`.
+
 ## RTSP
 
 RTSP streams from Protect are available under camera settings > Advanced.  

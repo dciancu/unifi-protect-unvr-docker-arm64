@@ -9,6 +9,7 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 > break the container.  
 > Also remember to disable auto update of the console and applications in the console settings.  
 > Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).  
+> Protect requires at least 4 GB RAM in order to boot and run correctly.  
 > It is recommended to only run Protect with no other services/images when running on limited hardware (like Raspberry Pi).
 
 > [!TIP]
@@ -63,6 +64,9 @@ Although this may not be needed and Protect may work and not give errors, the `u
 This further helps mimic the UNVR hardware which Protect expects to be running on.
 
 ## Setup
+
+> [!IMPORTANT]
+> Protect requires at least 4 GB RAM in order to boot and run correctly.  
 
 When you run the image for the first time, you have to go through the initial console setup, find the host IP address and
 navigate to `http://host-ip`.  

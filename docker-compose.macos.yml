@@ -1,0 +1,42 @@
+services:
+  unifi-protect:
+    image: dciancu/unifi-protect-unvr-docker-arm64:stable
+    tty: true
+    hostname: UNVR
+    extra_hosts:
+      - "UNVR:127.0.1.1"
+    container_name: unifi-protect
+    stop_grace_period: 2m
+    volumes:
+      - storage-srv:/srv
+      - storage-data:/data
+      - storage-persistent:/persistent
+    environment:
+      - container=docker
+      - STORAGE_DISK=/dev/sda
+      - DEBUG=false
+    restart: unless-stopped
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+      - /var/run
+      - /var/run/lock
+    privileged: true # required
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+      - "7441:7441/tcp"
+      - "7445:7445/tcp"
+      - "7446:7446/tcp"
+      - "7447:7447/tcp"
+      - "7451:7451/tcp"
+      - "7550:7550/tcp"
+      - "7552:7552/tcp"
+      # - "5353:5353/udp" # macOS mDNS is already bound
+      - "10001:10001/udp"
+
+volumes:
+  storage-srv:
+  storage-data:
+  storage-persistent:

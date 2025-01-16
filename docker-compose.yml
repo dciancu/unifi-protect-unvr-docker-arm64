@@ -47,7 +47,7 @@ services:
 #      - "7451:7451/tcp"
 #      - "7550:7550/tcp"
 #      - "7552:7552/tcp"
-#      - "5353:5353/udp"
+#      # - "5353:5353/udp" # macOS mDNS is already bound
 #      - "10001:10001/udp"
 
 # For macOS use volumes

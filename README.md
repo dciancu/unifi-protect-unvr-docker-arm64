@@ -10,7 +10,8 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 > Also remember to disable auto update of the console and applications in the console settings.  
 > Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).  
 > Protect requires at least 4 GB RAM in order to boot and run correctly.  
-> It is recommended to only run Protect with no other services/images when running on limited hardware (like Raspberry Pi).
+> It is recommended to only run Protect with no other services/images when running on limited hardware (like Raspberry Pi).  
+> macOS users please see `docker-compose.yml` for configuration changes needed.
 
 > [!TIP]
 > Works on Raspberry Pi (tested with Pi 4 model B 4GB on Debian 12 Bookworm).  
@@ -38,6 +39,7 @@ Create a new `docker-compose.override.yml` file and adjust below content for you
 ```
 services:
   unifi-protect:
+    image: dciancu/unifi-protect-unvr-docker-arm64:v5 # change tag here to use a different version
     environment:
       - STORAGE_DISK=/dev/sda
 # Set DEBUG mode to enable storage disk operations logging.
@@ -47,6 +49,10 @@ services:
 #      - /dev/sda:/dev/sda
 ```
 `STORAGE_DISK` should point to your disk holding the `storage` folder volume (see `docker-compose.yml`). **Make sure you have access to the device inside the container**, or mount it using `devices` key in `docker-compose.override.yml`.  
+
+### macOS
+
+For macOS please see `docker-compose.yml`, I have added comments with the configuration changes needed.
 
 ### Network
 

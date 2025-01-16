@@ -7,21 +7,26 @@ services:
       - "UNVR:127.0.1.1"
     container_name: unifi-protect
     stop_grace_period: 2m
-    cgroup: host
+    cgroup: host # for Linux, not required on macOS
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /sys/fs/cgroup:/sys/fs/cgroup # for Linux, not required on macOS
+      # For Linux bind mounts work
       - ./storage/srv:/srv
       - ./storage/data:/data
       - ./storage/persistent:/persistent
+      # For macOS use volumes
+#      - storage-srv:/srv
+#      - storage-data:/data
+#      - storage-persistent:/persistent
     environment:
       - container=docker
       - STORAGE_DISK=/dev/sda
       - DEBUG=false
     restart: unless-stopped
-    cap_add:
+    cap_add: # for Linux, not required on macOS
       - dac_read_search
       - sys_admin
-    security_opt:
+    security_opt: # for Linux, not required on macOS
       - apparmor=unconfined
       - seccomp=unconfined
     tmpfs:
@@ -30,5 +35,23 @@ services:
       - /tmp
       - /var/run
       - /var/run/lock
-    privileged: true
-    network_mode: host
+    privileged: true # required
+#    network_mode: host # does not work on macOS, use ports config below
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+      - "7441:7441/tcp"
+      - "7445:7445/tcp"
+      - "7446:7446/tcp"
+      - "7447:7447/tcp"
+      - "7451:7451/tcp"
+      - "7550:7550/tcp"
+      - "7552:7552/tcp"
+      - "5353:5353/udp"
+      - "10001:10001/udp"
+
+# For macOS use volumes
+#volumes:
+#  storage-srv:
+#  storage-data:
+#  storage-persistent:

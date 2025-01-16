@@ -54,7 +54,7 @@ services:
 
 Use `docker-compose.macos.yml`.
 ```
-docker compose -f docker-compose.macos.yml up -d
+docker compose -f docker-compose.macos.yml -f docker-compose.override.yml up -d
 ```
 
 ### Network

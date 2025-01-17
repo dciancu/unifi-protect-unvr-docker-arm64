@@ -2,6 +2,8 @@
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/circleci/F8zvFL89rXf6pgQo3twuVc/5tkZtrshQpSz4fo3k8M7ZZ/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/F8zvFL89rXf6pgQo3twuVc/5tkZtrshQpSz4fo3k8M7ZZ/tree/main)
 
+<a href="https://www.buymeacoffee.com/dciancu" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 42px !important;width: 151.9px !important;" ></a>
+
 Run UniFi Protect UNVR in Docker on ARM64 hardware.
 
 > [!IMPORTANT]
@@ -31,7 +33,20 @@ Some cameras may not adopt/work properly if Protect version is not new enough.
 There may be times when the latest version of Protect may not work (due to automated builds of the latest versions).
 
 Run the container using `docker compose` with the provided `docker-compose.yml`.  
-**Make sure you have read the below section on [Issues running systemd inside docker](#issues-running-systemd-inside-docker).**
+**Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).**
+
+### Updates
+
+> [!WARNING]
+> Maintain regular backups of the host running Protect and its data and always make backups before updating.
+
+Use `docker compose pull` followed by `docker compose up -d`.  
+Protect should take care of migrating itself to a new version automatically (cameras firmware will also auto-update).  
+**Never downgrade versions as this may break Protect.**
+
+When Protect updates to a new version, this could introduce new firmware for the cameras, which will start updating.  
+The camera firmware update could potentially make the camera no longer work with previous versions of Protect.  
+Generally, camera firmware is stable, but should issues occur please note that downgrading camera firmware is very hard or not possible sometimes.
 
 ### Config
 
@@ -57,12 +72,16 @@ Use `docker-compose.macos.yml`.
 docker compose -f docker-compose.macos.yml -f docker-compose.override.yml up -d
 ```
 
+Remote access via the cloud does not work with Docker on macOS, see https://github.com/dciancu/unifi-protect-unvr-docker-arm64/issues/25.  
+Use a Debian VM instead (try with [UTM](https://mac.getutm.app/), it is open source).
+
 ### Network
 
 > [!IMPORTANT]
 > Protect requires `IPv6` enabled (even if blocked by firewall or not routed) and make sure ports used by Protect are not in use by other services/images (`80`, `443` etc.).  
 
-Real UNVR has 2 network interfaces (`enp0s1` and `enp0s2`), if you mask your real network interface with `enp0s2` (see [Issues with remote access](#issues-with-remote-access)), then you only need to add `enp0s1`. For Debian, Ubuntu and other alike you can add a dummy interface with `ip link add enp0s1 type dummy`, and to be persistent across reboots, add to host network config at `/etc/network/interfaces`:
+Real UNVR has 2 network interfaces (`enp0s1` and `enp0s2`), if you mask your real network interface with `enp0s2` (see [Issues with remote access](#issues-with-remote-access)), then you only need to add `enp0s1`.  
+For Debian, Ubuntu and other alike you can add a dummy interface with `ip link add enp0s1 type dummy`, and to be persistent across reboots, add to host network config at `/etc/network/interfaces`:
 ```
 auto enp0s1
 iface enp0s1 inet manual
@@ -116,7 +135,10 @@ See: https://github.com/moby/moby/issues/42275
 > Make sure to update your network settings (**including your firewall rules**) to reflect the new interface name or you will lose internet connectivity. This is typically in `/etc/network/interfaces`.  
 > If you are using NetworkManager service on host, then this does not apply, as your new interface will be configured using DHCP automatically, but your firewall rules may still need updating.
 
-There is a known issue that remote access to your UNVR (via the Ubnt cloud) will not work with the console unless the primary network interface is named `enp0s2`. To achieve this, **on your host machine** create the file `/etc/systemd/network/98-enp0s2.link` with the content below, replacing `xx:xx:xx:xx:xx:xx` with your actual MAC address.
+> [!NOTE]
+> Remote access via the cloud does not work with Docker on macOS (use a Debian VM instead).
+
+There is a known issue that remote access to your UNVR via the cloud will not work with the console unless the primary network interface is named `enp0s2`. To achieve this, **on your host machine** create the file `/etc/systemd/network/98-enp0s2.link` with the content below, replacing `xx:xx:xx:xx:xx:xx` with your actual MAC address.
 
 ```
 [Match]

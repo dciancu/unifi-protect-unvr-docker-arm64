@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: 'main'
       - run: |
           git config user.name 'dciancu'
           git config user.email 'dciancu@users.noreply.github.com'

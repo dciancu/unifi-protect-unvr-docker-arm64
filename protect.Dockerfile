@@ -85,7 +85,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb \
     && echo 'exit 0' > /usr/sbin/policy-rc.d \
-    # enable storage via ustorage instead of grpc ustate
+    # Enable storage via ustorage instead of grpc ustate.
+    # This will most likely need to be updated with each firmware release.
     && sed -i 's/return Ys(),Je()?/return Ys(),!0?/g' /usr/share/unifi-core/app/service.js \
     && mv /sbin/mdadm /sbin/mdadm.orig \
     && mv /sbin/ubnt-tools /sbin/ubnt-tools.orig \

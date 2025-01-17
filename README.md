@@ -164,6 +164,7 @@ Use the `build.sh` script.
 This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com), inside a docker container.  
 You can provide a custom `FW_URL` environment variable to download the firmware binary from a custom link.  
 Set `DOCKER_IMAGE` environment variable to use a custom image tag.  
+Set `FW_UNSTABLE` when building firmware to download the latest version, skipping the stable flag.
 Set `ALL_DEBS` when building firmware to extract and save all packages.
 
 ## Acknowledgements

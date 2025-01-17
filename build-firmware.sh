@@ -11,7 +11,7 @@ fi
 
 docker build -f firmware-base.Dockerfile -t unvr-firmware-base --pull .
 docker build -f firmware.Dockerfile --no-cache -t unvr-firmware \
-    --build-arg "FW_URL=${FW_URL:-}" --build-arg "ALL_DEBS=${ALL_DEBS:-}" .
+    --build-arg "FW_URL=${FW_URL:-}" --build-arg "ALL_DEBS=${ALL_DEBS:-}" --build-arg "FW_UNSTABLE=${FW_UNSTABLE:-}" .
 if [ -f firmware/version ]; then
     rm -r firmware/*
 fi

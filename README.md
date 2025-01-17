@@ -57,13 +57,18 @@ services:
     image: dciancu/unifi-protect-unvr-docker-arm64:v5 # change tag here to use a different version
     environment:
       - STORAGE_DISK=/dev/sda
-# Set DEBUG mode to enable storage disk operations logging.
+# Set DEBUG mode to enable all debug options below.
 #      - DEBUG=true
+# Set DEBUG_STORAGE to enable storage disk operations logging.
+#      - DEBUG_STORAGE=true
+# Set DEBUG_UNIFI_CORE to enable unifi-core debug log level.
+#      - DEBUG_UNIFI_CORE=true
 # If needed to mount device inside container.
 #    devices:
 #      - /dev/sda:/dev/sda
 ```
 `STORAGE_DISK` should point to your disk holding the `storage` folder volume (see `docker-compose.yml`). **Make sure you have access to the device inside the container**, or mount it using `devices` key in `docker-compose.override.yml`.  
+Protect video is at `/srv` volume inside container.
 
 ### macOS
 
@@ -109,8 +114,9 @@ You can now proceed to add cameras to Protect.
 
 You can check logs using `docker compose logs -f` and files inside container at `/var/log`.  
 Inside the container you can check logs using `journalctl -f`.  
-`unifi-protect` logs are at `/srv/unifi-protect/logs`  
-`unifi-core` logs are at `/data/unifi-core/logs`
+`unifi-protect` logs are at `/srv/unifi-protect/logs`.  
+`unifi-core` logs are at `/data/unifi-core/logs`.  
+If `DEBUG_STORAGE` is enabled, logs are at `/var/log/storage_disk_debug.log`.
 
 ## Issues running Systemd inside Docker
 

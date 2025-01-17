@@ -8,7 +8,7 @@ services:
     container_name: unifi-protect
     stop_grace_period: 2m
     volumes:
-      - storage-srv:/srv
+      - storage-srv:/srv # Protect video
       - storage-data:/data
       - storage-persistent:/persistent
     environment:

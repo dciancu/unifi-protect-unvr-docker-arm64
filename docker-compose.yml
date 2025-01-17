@@ -11,7 +11,7 @@ services:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup # for Linux, not required on macOS
       # For Linux bind mounts work
-      - ./storage/srv:/srv
+      - ./storage/srv:/srv # Protect video
       - ./storage/data:/data
       - ./storage/persistent:/persistent
       # For macOS use volumes

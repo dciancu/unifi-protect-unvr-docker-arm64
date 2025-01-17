@@ -12,12 +12,12 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - restore_cache:
-          key: firmware-{{ checksum "firmware.Dockerfile" }}-
+          key: firmware-{{ .Branch }}-{{ checksum "build-firmware.sh" }}-{{ checksum "firmware.Dockerfile" }}-
       - run:
           name: Build Firmware
           command: ./build-firmware.sh
       - save_cache:
-          key: firmware-{{ checksum "firmware.Dockerfile" }}-{{ checksum "firmware/version" }}
+          key: firmware-{{ .Branch }}-{{ checksum "build-firmware.sh" }}-{{ checksum "firmware.Dockerfile" }}-{{ checksum "firmware/version" }}
           paths:
             - firmware
       - run:

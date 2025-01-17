@@ -25,7 +25,7 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 Tags:
 - **`Protect specific version - recommended`** - alias of stable and edge tags with Protect version (v5/v4 etc.)
 - `stable` - uses Protect version packaged in UNVR firmware
-- `edge` - uses latest Protect version (may not always work)
+- `edge` - uses latest Protect version
 - `Firmware (UniFi OS) specific version` - uses Protect version packaged in UNVR firmware (alias of stable tag)
 
 For the latest features and fixes always use the latest version.  

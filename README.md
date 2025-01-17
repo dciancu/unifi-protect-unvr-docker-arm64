@@ -30,7 +30,6 @@ Tags:
 
 For the latest features and fixes always use the latest version.  
 Some cameras may not adopt/work properly if Protect version is not new enough.  
-There may be times when the latest version of Protect may not work (due to automated builds of the latest versions).
 
 Run the container using `docker compose` with the provided `docker-compose.yml`.  
 **Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).**

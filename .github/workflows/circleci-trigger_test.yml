@@ -12,7 +12,7 @@ jobs:
       - run: |
           git config user.name 'dciancu'
           git config user.email 'dciancu@users.noreply.github.com'
-          git branch build
-          git checkout build
+          git branch build-test
+          git checkout build-test
           git commit --allow-empty -m 'trigger'
           git push --force -u origin build-test

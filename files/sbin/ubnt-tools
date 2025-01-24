@@ -11,10 +11,10 @@ if [ "${1:-}" = 'id' ]; then
     # echo "board.sysid=0xe970" # UCK_G2_PLUS
     # echo "board.sysid=0xea13" # UDM_SE
     # echo "board.sysid=0xea15" # UDM_PRO
-    echo "board.sysid=0xea16" # UNVR4
+    # echo "board.sysid=0xea16" # UNVR4
     # echo "board.sysid=0xea1a" # UNVR4
     # echo "board.sysid=0xea20" # UNVR_PRO
-    # echo "board.sysid=0xea51" # UNAS PRO
+    echo "board.sysid=0xea51" # UNAS PRO
     # echo "board.sysid=0xffff" # MAC_OS
 
     echo "board.name=UniFi Network Video Recorder"

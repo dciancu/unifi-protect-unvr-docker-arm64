@@ -28,11 +28,11 @@ Tags:
 - `edge` - uses latest Protect version
 - `Firmware (UniFi OS) specific version` - uses Protect version packaged in UNVR firmware (alias of stable tag)
 
-For the latest features and fixes always use the latest version.  
-Some cameras may not adopt/work properly if Protect version is not new enough.  
-
 Run the container using `docker compose` with the provided `docker-compose.yml`.  
 **Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).**
+
+For the latest features and fixes always use the latest version.  
+Some cameras may not adopt/work properly if Protect version is not new enough.  
 
 ### Updates
 

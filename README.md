@@ -183,5 +183,7 @@ This project has been greatly inspired from below projects.
 
 ## Disclaimer
 
+This is an experimental project. I do not take responsibility for anything regarding the use or misuse of the contents of this repository.
+
 This Docker image is not associated with UniFi and/or Ubiquiti in any way.  
 We do not distribute any third party software and only use packages that are freely available on the internet.

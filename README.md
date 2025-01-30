@@ -32,7 +32,7 @@ Some cameras may not adopt/work properly if Protect version is not new enough or
 ## Building
 
 Use the `build.sh` script.  
-This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com), inside a docker container.
+This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com) and then build Protect, all inside a docker containers.
 
 Environment variables:
 - Set `DOCKER_IMAGE` when building Protect to use a custom image tag.

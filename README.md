@@ -174,14 +174,10 @@ I have also discovered that **direct remote access via the app** (without remote
 RTSP streams from Protect are available under camera settings > Advanced.  
 Remove `?enableSrtp` from the end and change to rtsp (port 7447) `rtsp://host-ip:7447/camera-id`.
 
-## Acknowledgements
+## Acknowledgement
 
-This project has been greatly inspired from below projects.
-
-[markdegrootnl/unifi-protect-arm64](https://github.com/markdegrootnl/unifi-protect-arm64) - original project  
-[Top-Cat/unifi-protect-arm64](https://github.com/Top-Cat/unifi-protect-arm64) - fork  
-[kiwimato/unifi-protect-arm64](https://github.com/kiwimato/unifi-protect-arm64) - fork  
-[snowsnoot/unifi-unvr-arm64](https://github.com/snowsnoot/unifi-unvr-arm64) - fork
+This project started as a fork of [markdegrootnl/unifi-protect-arm64](https://github.com/markdegrootnl/unifi-protect-arm64).  
+Many thanks to the initial author who started this project.
 
 ## Disclaimer
 

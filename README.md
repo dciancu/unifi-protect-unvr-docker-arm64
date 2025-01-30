@@ -65,7 +65,6 @@ Create a new `docker-compose.override.yml` file and adjust below content for you
 ```
 services:
   unifi-protect:
-    image: dciancu/unifi-protect-unvr-docker-arm64:v5 # change tag here to use a different version
     environment:
       - STORAGE_DISK=/dev/sda
 # If needed to mount device inside container.

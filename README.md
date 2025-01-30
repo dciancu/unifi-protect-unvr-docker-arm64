@@ -13,6 +13,7 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 > Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).  
 > Protect requires at least 4 GB RAM in order to boot and run correctly.  
 > It is recommended to only run Protect with no other services/images when running on limited hardware (like Raspberry Pi).  
+> If running inside a VM, make sure to bridge its net adapter or forward ports from host to the VM.  
 > For macOS use `docker-compose.macos.yml`.
 
 > [!TIP]
@@ -32,7 +33,7 @@ Run the container using `docker compose` with the provided `docker-compose.yml`.
 **Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).**
 
 For the latest features and fixes always use the latest version.  
-Some cameras may not adopt/work properly if Protect version is not new enough.  
+Some cameras may not adopt/work properly if Protect version is not new enough or the storage capacity is not 100 GB at least.  
 
 ### Updates
 

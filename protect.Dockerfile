@@ -67,21 +67,21 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
 COPY firmware/version /usr/lib/version
 COPY files/lib /lib/
 
-ARG UNVR_STABLE
+ARG PROTECT_STABLE
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     --mount=type=bind,source=firmware/debs,target=/opt/debs \
     --mount=type=bind,source=firmware/unifi-protect-deb,target=/opt/unifi-protect-deb \
     set -euo pipefail \
-    && UNVR_STABLE="${UNVR_STABLE:-}" \
+    && PROTECT_STABLE="${PROTECT_STABLE:-}" \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
-    # UNVR_STABLE not set
-    && test ! -z "$UNVR_STABLE" || apt-get -y --no-install-recommends --force-yes \
+    # PROTECT_STABLE not set
+    && test ! -z "$PROTECT_STABLE" || apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb unifi-protect \
-    # UNVR_STABLE set
-    && test -z "$UNVR_STABLE" || apt-get -y --no-install-recommends --force-yes \
+    # PROTECT_STABLE set
+    && test -z "$PROTECT_STABLE" || apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb \
     && echo 'exit 0' > /usr/sbin/policy-rc.d \

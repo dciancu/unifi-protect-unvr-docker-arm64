@@ -1,7 +1,5 @@
 # UniFi Protect UNVR Docker container for arm64
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/circleci/F8zvFL89rXf6pgQo3twuVc/5tkZtrshQpSz4fo3k8M7ZZ/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/F8zvFL89rXf6pgQo3twuVc/5tkZtrshQpSz4fo3k8M7ZZ/tree/main)
-
 <a href="https://www.buymeacoffee.com/dciancu" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 42px !important;width: 151.9px !important;" ></a>
 
 Run UniFi Protect UNVR in Docker on ARM64 hardware.
@@ -22,18 +20,31 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 
 ## Usage
 
-**Docker Hub Image: [dciancu/unifi-protect-unvr-docker-arm64](https://hub.docker.com/r/dciancu/unifi-protect-unvr-docker-arm64)**  
-Tags:
-- **`Protect specific version - recommended`** - alias of stable and edge tags with Protect version (v5/v4 etc.)
-- `stable` - uses Protect version packaged in UNVR firmware
-- `edge` - uses latest Protect version
-- `Firmware (UniFi OS) specific version` - uses Protect version packaged in UNVR firmware (alias of stable tag)
+You need to build the image using the `build.sh` script (see [Building](#building) section for details).  
+This repo doesn't have prebuilt images available. This is to prevent redistribution of Ubiquiti's intelectual property.
 
 Run the container using `docker compose` with the provided `docker-compose.yml`.  
 **Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).**
 
 For the latest features and fixes always use the latest version.  
 Some cameras may not adopt/work properly if Protect version is not new enough or the storage capacity is not 100 GB at least.  
+
+## Building
+
+Use the `build.sh` script.  
+This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com), inside a docker container.
+
+Environment variables:
+- Set `DOCKER_IMAGE` when building Protect to use a custom image tag.
+- Set `BUILD_STABLE` when building Protect to build `stable` image - uses Protect version packaged in UNVR firmware.
+- Set `BUILD_EDGE` when building Protect to build `edge` image - uses latest Protect version.
+- Set `BUILD_TAG_VERSION` when building Protect to tag images with Protect version.
+- Set `BUILD_PRUNE` when building Protect to delete ALL images and prune build cache.
+- Set `BUILD_TEST` when building Protect to build test images.
+- Set `FW_URL` when building firmware to download the firmware binary from a custom link.
+- Set `FW_EDGE` when building firmware to download the latest firmware, instead of the supported repo firmware.
+- Set `FW_UNSTABLE` when building firmware to download the latest version, skipping the stable flag.
+- Set `FW_ALL_DEBS` when building firmware to extract and save all packages.
 
 ### Updates
 
@@ -164,15 +175,6 @@ I have also discovered that **direct remote access via the app** (without remote
 RTSP streams from Protect are available under camera settings > Advanced.  
 Remove `?enableSrtp` from the end and change to rtsp (port 7447) `rtsp://host-ip:7447/camera-id`.
 
-## Building
-
-Use the `build.sh` script.  
-This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com), inside a docker container.  
-You can provide a custom `FW_URL` environment variable to download the firmware binary from a custom link.  
-Set `DOCKER_IMAGE` environment variable to use a custom image tag.  
-Set `FW_UNSTABLE` when building firmware to download the latest version, skipping the stable flag.
-Set `ALL_DEBS` when building firmware to extract and save all packages.
-
 ## Acknowledgements
 
 This project has been greatly inspired from below projects.
@@ -184,7 +186,8 @@ This project has been greatly inspired from below projects.
 
 ## Disclaimer
 
-This is an experimental project. I do not take responsibility for anything regarding the use or misuse of the contents of this repository.
+This is an experimental project. I do not take responsibility for anything regarding the use or misuse of the contents of this repository.  
+By using this repo you accept all risk associated with it and releasing all parties from any liability associated with this software.
 
 This Docker image is not associated with UniFi and/or Ubiquiti in any way.  
 We do not distribute any third party software and only use packages that are freely available on the internet.

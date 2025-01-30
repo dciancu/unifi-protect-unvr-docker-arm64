@@ -1,6 +1,6 @@
 FROM unvr-firmware-base AS firmware
-ARG ALL_DEBS
 ARG FW_URL
+ARG FW_ALL_DEBS
 ARG FW_UNSTABLE
 ARG FW_UPDATE_URL='https://fw-update.ubnt.com/api/firmware?filter=eq~~platform~~unvr&filter=eq~~channel~~release&sort=-version&limit=10'
 ARG DEBIAN_FRONTEND=noninteractive
@@ -47,7 +47,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     done < ../packages.txt \
     && ls -lh \
     # ALL_DEBS set
-    && test -z "${ALL_DEBS:-}" || (mkdir ../all-debs && cp * ../all-debs/) \
+    && test -z "${FW_ALL_DEBS:-}" || (mkdir ../all-debs && cp * ../all-debs/) \
     && mkdir ../debs \
     && cp ubnt-archive-keyring* unifi-core* ubnt-tools* ulp-go* unifi-assets-unvr* unifi-directory* \
         unifi-email-templates-all* ../debs/ \

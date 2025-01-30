@@ -10,7 +10,7 @@ cd "$SCRIPT_DIR"
 
 FW_UPDATE_URL='https://fw-update.ubnt.com/api/firmware?filter=eq~~platform~~unvr&filter=eq~~channel~~release&sort=-version&limit=10'
 LATEST_FIRMWARE="$(wget -q --output-document - "$FW_UPDATE_URL" | jq -r '._embedded.firmware[0]._links.data.href')"
-LATEST_REPO_FIRMWARE="$(tr -d '\n' < LATEST_FIRMWARE.txt)"
+LATEST_REPO_FIRMWARE="$(tr -d '\n' < firmware.txt)"
 
 echo "Latest Firmware: ${LATEST_FIRMWARE}"
 echo "Latest Repo Firmware: ${LATEST_REPO_FIRMWARE}"

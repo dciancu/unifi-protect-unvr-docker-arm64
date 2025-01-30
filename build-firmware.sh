@@ -6,7 +6,7 @@ SCRIPT_DIR="$(dirname "$0")"
 cd "$SCRIPT_DIR"
 
 if [[ -z "${FW_EDGE+x}" ]]; then
-    FW_URL="$(tr -d '\n' < LATEST_FIRMWARE.txt)"
+    FW_URL="$(tr -d '\n' < firmware.txt)"
 fi
 
 docker build -f firmware-base.Dockerfile -t unvr-firmware-base --pull .

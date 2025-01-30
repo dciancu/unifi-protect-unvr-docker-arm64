@@ -186,7 +186,7 @@ This project has been greatly inspired from below projects.
 ## Disclaimer
 
 This is an experimental project. I do not take responsibility for anything regarding the use or misuse of the contents of this repository.  
-By using this repo you accept all risk associated with it and releasing all parties from any liability associated with this software.
+By using this project you accept all risk associated with it and releasing all parties from any liability associated with this software.
 
-This Docker image is not associated with UniFi and/or Ubiquiti in any way.  
+This project is not associated with UniFi and/or Ubiquiti in any way.  
 We do not distribute any third party software and only use packages that are freely available on the internet.

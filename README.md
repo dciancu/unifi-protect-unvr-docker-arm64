@@ -88,7 +88,8 @@ docker compose -f docker-compose.macos.yml -f docker-compose.override.yml up -d
 ```
 
 Remote access via the cloud does not work with Docker on macOS, see https://github.com/dciancu/unifi-protect-unvr-docker-arm64/issues/25.  
-Use a Debian VM instead (try with [UTM](https://mac.getutm.app/), it is open source).
+Use a Debian VM instead (try with [UTM](https://mac.getutm.app/), it is open source).  
+If running inside a VM, make sure to bridge its net adapter or forward ports from host to the VM.
 
 ### Network
 

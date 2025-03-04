@@ -62,7 +62,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
     && echo "deb https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" > /etc/apt/sources.list.d/postgresql.list \
     && apt-get update \
-    && apt-get --no-install-recommends -y install postgresql-14 postgresql-9.6
+    && apt-get --no-install-recommends -y install postgresql-9.6 \
+    && apt-get --no-install-recommends -y install postgresql-14 
 
 COPY firmware/version /usr/lib/version
 COPY files/lib /lib/

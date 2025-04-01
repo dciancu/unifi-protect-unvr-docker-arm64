@@ -62,8 +62,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
     && echo "deb https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" > /etc/apt/sources.list.d/postgresql.list \
     && apt-get update \
-    && apt-get --no-install-recommends -y install postgresql-9.6 \
-    && apt-get --no-install-recommends -y install postgresql-14 
+    && apt-get --no-install-recommends -y install postgresql-14
 
 COPY firmware/version /usr/lib/version
 COPY files/lib /lib/
@@ -92,9 +91,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && mv /sbin/mdadm /sbin/mdadm.orig \
     && mv /sbin/ubnt-tools /sbin/ubnt-tools.orig \
     && systemctl enable storage_disk dbpermissions fix_hosts \
-    && pg_dropcluster --stop 9.6 main \
     && sed -i 's/rm -f/rm -rf/' /sbin/pg-cluster-upgrade \
-    && sed -i 's/OLD_DB_CONFDIR=.*/OLD_DB_CONFDIR=\/etc\/postgresql\/9.6\/main/' /sbin/pg-cluster-upgrade \
     && touch /usr/bin/uled-ctrl \
     && chmod +x /usr/bin/uled-ctrl \
     && chown root:root /etc/sudoers.d/* \

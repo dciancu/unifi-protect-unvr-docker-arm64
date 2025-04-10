@@ -16,7 +16,7 @@ echo "Latest Firmware: ${LATEST_FIRMWARE}"
 echo "Latest Repo Firmware: ${LATEST_REPO_FIRMWARE}"
 
 if [[ "$LATEST_FIRMWARE" == "$LATEST_REPO_FIRMWARE" ]]; then
-    echo -e "${GREEN}Latest firmware in repo ok.${NC}"
+    echo -e "${GREEN}Latest firmware in repo up-to-date.${NC}"
     exit 0
 else
     echo -e "${RED}Found newer latest firmware!${NC}"

@@ -5,6 +5,7 @@ SHELL ["/usr/bin/env", "bash", "-c"]
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
+    && echo -e '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d \
     && apt-get update \
     && apt-get install -y apt-transport-https ca-certificates \
     && sed -i 's/http:/https:/g' /etc/apt/sources.list \
@@ -39,6 +40,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         systemd-timesyncd \
         sysstat \
         net-tools \
+    && rm -f /usr/sbin/policy-rc.d \
     && find /etc/systemd/system \
         /lib/systemd/system \
         -path '*.wants/*' \
@@ -58,11 +60,13 @@ RUN set -euo pipefail \
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
+    && echo -e '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d \
     && curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor \
         | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
     && echo "deb https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" > /etc/apt/sources.list.d/postgresql.list \
     && apt-get update \
-    && apt-get --no-install-recommends -y install postgresql-14
+    && apt-get --no-install-recommends -y install postgresql-14 \
+    && rm -f /usr/sbin/policy-rc.d
 
 COPY firmware/version /usr/lib/version
 COPY files/lib /lib/
@@ -72,6 +76,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     --mount=type=bind,source=firmware/debs,target=/opt/debs \
     --mount=type=bind,source=firmware/unifi-protect-deb,target=/opt/unifi-protect-deb \
     set -euo pipefail \
+    && echo -e '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
@@ -95,7 +100,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && touch /usr/bin/uled-ctrl \
     && chmod +x /usr/bin/uled-ctrl \
     && chown root:root /etc/sudoers.d/* \
-    && echo -e '\n\nexport PGHOST=127.0.0.1\n' >> /usr/lib/ulp-go/scripts/envs.sh
+    && echo -e '\n\nexport PGHOST=127.0.0.1\n' >> /usr/lib/ulp-go/scripts/envs.sh \
+    && rm -f /usr/sbin/policy-rc.d
 
 COPY files/sbin /sbin/
 COPY files/usr /usr/

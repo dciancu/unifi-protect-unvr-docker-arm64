@@ -76,7 +76,6 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     --mount=type=bind,source=firmware/debs,target=/opt/debs \
     --mount=type=bind,source=firmware/unifi-protect-deb,target=/opt/unifi-protect-deb \
     set -euo pipefail \
-    && echo -e '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
@@ -89,7 +88,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && test -z "$PROTECT_STABLE" || apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb \
-    && echo 'exit 0' > /usr/sbin/policy-rc.d \
+    && echo -e '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d \
     # Enable storage via ustorage instead of grpc ustate.
     # This will most likely need to be updated with each firmware release.
     && sed -i 's/return Ys(),Je()?/return Ys(),!0?/g' /usr/share/unifi-core/app/service.js \
@@ -101,6 +100,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && chmod +x /usr/bin/uled-ctrl \
     && chown root:root /etc/sudoers.d/* \
     && echo -e '\n\nexport PGHOST=127.0.0.1\n' >> /usr/lib/ulp-go/scripts/envs.sh \
+    && mkdir -p /data/unifi-core/config/http \
     && rm -f /usr/sbin/policy-rc.d
 
 COPY files/sbin /sbin/

@@ -24,9 +24,9 @@ else
         | jq -r '._embedded.firmware | map(select(.probability_computed == 1))[0] | ._links.data.href')"
     if [[ "$LATEST_STABLE_FIRMWARE" != "$LATEST_FIRMWARE" ]]; then
         echo -e "${RED}WARN: Latest firmware is not marked as stable!${NC}"
-        exit 1
+        test -n "${FW_EDGE:-}" && exit 1 || exit 0
     else
         echo -e "${GREEN}Latest firmware is marked as stable.${NC}"
-        exit 0
+        exit 1
     fi
 fi

@@ -7,4 +7,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: bash check-latest-firmware.sh
+      - run: FW_EDGE=1 bash check-latest-firmware.sh

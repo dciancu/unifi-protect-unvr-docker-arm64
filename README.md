@@ -46,10 +46,10 @@ docker build -t protect .
 
 Environment variables:
 - Set `DOCKER_IMAGE` when building Protect to use a custom image tag.
+- Set `DOCKER_NO_CACHE` when building firmware or Protect to disable build cache (`--no-cache` option).
 - Set `BUILD_STABLE` when building Protect to build `stable` image - uses Protect version packaged in UNVR firmware.
 - Set `BUILD_EDGE` when building Protect to build `edge` image - uses latest Protect version.
 - Set `BUILD_TAG_VERSION` when building Protect to tag images with Protect version.
-- Set `BUILD_NO_CACHE` when building Protect to disable build cache (`--no-cache` option).
 - Set `BUILD_PRUNE` when building Protect to delete **ALL** images and prune build cache.
 - Set `BUILD_TEST` when building Protect to build test images.
 - Set `FW_URL` when building firmware to download the firmware binary from a custom link.

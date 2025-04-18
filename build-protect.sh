@@ -8,7 +8,7 @@ cd "$SCRIPT_DIR"
 opts=''
 image_name="${DOCKER_IMAGE:-dciancu/unifi-protect-unvr-docker-arm64}"
 
-if [[ -n "${BUILD_NO_CACHE+x}" ]]; then
+if [[ -n "${DOCKER_NO_CACHE+x}" ]]; then
     opts='--no-cache'
 fi
 

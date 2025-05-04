@@ -12,9 +12,12 @@ services:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup # for Linux, not required on macOS
       # For Linux bind mounts work
-      - ./storage/srv:/srv # Protect video
-      - ./storage/data:/data
-      - ./storage/persistent:/persistent
+      - /data/protect/srv:/srv # Protect video
+      - /data/protect/data:/data
+      - /data/protect/persistent:/persistent
+#      - ./storage/srv:/srv # Protect video
+#      - ./storage/data:/data
+#      - ./storage/persistent:/persistent
       # For macOS use volumes
 #      - storage-srv:/srv
 #      - storage-data:/data
@@ -38,6 +41,7 @@ services:
       - /var/run/lock
     privileged: true # required
     network_mode: host # does not work on macOS, use ports config below
+#    network_mode: none
 #    ports:
 #      - "80:80/tcp"
 #      - "443:443/tcp"

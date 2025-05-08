@@ -54,10 +54,10 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     # ALL_DEBS set
     && test -z "${FW_ALL_DEBS:-}" || (mkdir ../all-debs && cp * ../all-debs/) \
     && mkdir ../debs \
-    && cp ubnt-archive-keyring* unifi-core* ubnt-tools* ulp-go* unifi-assets-unvr* unifi-directory* \
-        unifi-email-templates-all* ../debs/ \
+    && cp ubnt-archive-keyring_* unifi-core_* ubnt-tools_* ulp-go_* unifi-assets-unvr_* unifi-directory_* uos_* node* \
+        unifi-email-templates-all_* ../debs/ \
     && mkdir ../unifi-protect-deb \
-    && cp unifi-protect* ../unifi-protect-deb/ \
+    && cp unifi-protect_* ../unifi-protect-deb/ \
     && cd .. \
     && rm -r _fwupdate.bin.extracted debs-build \
     && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0) && exit 0

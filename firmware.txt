@@ -1,1 +1,1 @@
-https://fw-download.ubnt.com/data/unifi-nvr/1900-UNVR-4.1.22-f128a370-2575-4505-9993-c5a326e013ae.bin
+https://fw-download.ubnt.com/data/unifi-nvr/061e-UNVR-4.2.9-fbb277d3-482c-4eda-b1ea-9547756ef58e.bin

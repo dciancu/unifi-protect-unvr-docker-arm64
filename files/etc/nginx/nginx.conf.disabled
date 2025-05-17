@@ -1,0 +1,140 @@
+
+user  nginx;
+worker_processes  auto;
+
+error_log  /var/log/nginx/error.log notice;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    map_hash_max_size 1024;
+    map_hash_bucket_size 1024;
+
+    # Customize logging
+    map $time_iso8601 $time_date {
+        ~([^+]+) $1;
+    }
+    map $time_iso8601 $time_offset {
+        ~\+([0-9:]+)$ $1;
+    }
+    map $msec $millis {
+        ~\.([0-9]+)$ $1;
+    }
+    map $server_name $connection_type {
+        default                     'local ';
+        ~\.id\.ui\.direct$          'direct';
+        ~\.unifi-hosting\.ui\.com$  'direct';
+        ''                          'cloud';
+    }
+
+    log_format apm '$time_date.$millis+$time_offset $connection_type '
+               '$status "$request" '
+               'rt=$request_time tx=$bytes_sent '
+               'u_rt=$upstream_response_time u_tx=$upstream_bytes_received '
+               'ip=$remote_addr user="$sent_http_x_username"';
+
+    access_log /data/unifi-core/logs/nginx-access.log apm;
+    error_log /data/unifi-core/logs/nginx-error.log;
+
+
+    # Generic params
+    sendfile        on;
+    keepalive_timeout  65;
+    server_tokens off;
+    client_max_body_size 1g;
+    server_names_hash_bucket_size 128;
+
+
+    # Common proxy configuration
+    proxy_read_timeout 10m;
+    proxy_cache_path /var/cache/nginx/uos_auth keys_zone=auth_responses:1m max_size=1m;
+
+
+    # SSL
+    ssl_session_cache shared:SSL:1m;
+    ssl_session_timeout 4h;
+    ssl_prefer_server_ciphers on;
+    ssl_session_tickets off;
+    include /data/unifi-core/config/http/ssl-dynamic[.]conf;
+
+    # WebSockets
+    map $http_upgrade $connection_upgrade {
+        default upgrade;
+        ''      close;
+    }
+    map $sent_http_sec_websocket_protocol:$http_sec_websocket_protocol $ws_protocol {
+        default     '';
+        ~^:(.+)$    $http_sec_websocket_protocol;
+    }
+
+
+    # CORS
+    map $http_origin $cors_origin {
+        default                                 '';
+        https://unifi.ui.com                    $http_origin;
+        ~^https://unifi.(stg|dev|df).ui.com$    $http_origin;
+        ~.unifi.dev.ui.com$                     $http_origin;
+        https://dev.unifi.ui.com:3001           $http_origin;
+        https://dev.unifi.ui.local:3002         $http_origin;
+        https://setup.dev.ui.com:3001           $http_origin;
+    }
+    map $http_origin $cors_credentials {
+        default                                 'false';
+        https://unifi.ui.com                    'true';
+        ~^https://unifi.(stg|dev|df).ui.com$    'true';
+        ~.unifi.dev.ui.com$                     'true';
+        https://dev.unifi.ui.com:3001           'true';
+        https://dev.unifi.ui.local:3002         'true';
+        https://setup.dev.ui.com:3001           'true';
+    }
+
+
+    # CSRF
+    map $sent_http_x_updated_csrf_token:$sent_http_x_provided_csrf_token:$sent_http_x_expected_csrf_token $csrf_token_header {
+        default             '';
+        ~^(.+):(.*):(.*)$   $sent_http_x_updated_csrf_token;
+        ~^::(.+)$           $sent_http_x_expected_csrf_token;
+    }
+
+
+    # WS Origin
+    map $connection_upgrade|$cors_credentials|$http_origin $provided_ws_origin {
+        default                 "";
+        ~^upgrade\|true\|(.+)$  $cors_origin;
+        ~^upgrade\|false\|(.+)$ $host;
+    }
+    map $connection_upgrade|$cors_credentials|$http_origin $expected_ws_origin {
+        default                                                         "";
+        ~^upgrade\|true\|(.+)$                                          $http_origin;
+        ~^upgrade\|false\|(\w+:\/\/)([^:]+|(\[[a-f0-9:]+\])):?(\d+)?$   $2;
+
+    }
+
+
+    # UOS mappings
+    map $request_uri $target_runnable {
+        default                         '';
+        ~^/proxy/([a-z]+)/(.*)$         $1;
+        ~^/app-assets/([a-z]+)/(.*)$    $1;
+    }
+
+
+    # Upstream servers
+    include /data/unifi-core/config/http/upstream-*.conf;
+
+
+    # Extra includes
+    include /data/unifi-core/config/http/site-*.conf;
+}
+
+stream {
+    include /data/unifi-core/config/tcp/colocated/*/site-*.conf;
+}

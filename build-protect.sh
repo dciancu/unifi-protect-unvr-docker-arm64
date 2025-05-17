@@ -44,7 +44,7 @@ else
     fi
 
     if [[ -n "${BUILD_STABLE+x}" ]] || [[ -z "${BUILD_EDGE+x}" ]]; then
-        docker build $opts -f protect.Dockerfile --build-arg PROTECT_STABLE=1 -t "${image_name}:stable" --pull .
+        docker build $opts -f protect.Dockerfile --build-arg PROTECT_STABLE=1 -t "${image_name}:stable" --pull --platform linux/arm64 .
         if [[ -n "${BUILD_TAG_VERSION+x}" ]]; then
             firmware_version="$(tr -d '\n' < firmware/version)"
             docker tag "${image_name}:stable" "${image_name}:${firmware_version}"

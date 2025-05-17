@@ -20,7 +20,7 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 
 ## Usage
 
-You need to build the image using the `build.sh` script (see [Building](#building) section for details).  
+You need to build the image using the `build.sh` script or `Dockerfile` (see [Building](#building) section for details).  
 This repo doesn't have prebuilt images available. This is to prevent redistribution of Ubiquiti's intelectual property.
 
 Run the container using `docker compose` with the provided `docker-compose.yml`.  
@@ -31,15 +31,26 @@ Some cameras may not adopt/work properly if Protect version is not new enough or
 
 ## Building
 
-Use the `build.sh` script.  
-This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com) and then build Protect, all inside a docker containers.
+Use the `build.sh` script or `Dockerfile`.  
+This will download and extract the firmware packages from the latest version available for the `UNVR` from the official UniFi download source (https://fw-update.ubnt.com) and then build Protect, all inside docker containers.
+
+`build.sh` usage:
+```
+BUILD_EDGE=1 BUILD_TAG_VERSION=1 bash build.sh
+```
+
+`Dockerfile` usage:
+```
+docker build -t protect .
+```
 
 Environment variables:
 - Set `DOCKER_IMAGE` when building Protect to use a custom image tag.
+- Set `DOCKER_NO_CACHE` when building firmware or Protect to disable build cache (`--no-cache` option).
 - Set `BUILD_STABLE` when building Protect to build `stable` image - uses Protect version packaged in UNVR firmware.
 - Set `BUILD_EDGE` when building Protect to build `edge` image - uses latest Protect version.
 - Set `BUILD_TAG_VERSION` when building Protect to tag images with Protect version.
-- Set `BUILD_PRUNE` when building Protect to delete ALL images and prune build cache.
+- Set `BUILD_PRUNE` when building Protect to delete **ALL** images and prune build cache.
 - Set `BUILD_TEST` when building Protect to build test images.
 - Set `FW_URL` when building firmware to download the firmware binary from a custom link.
 - Set `FW_EDGE` when building firmware to download the latest firmware, instead of the supported repo firmware.

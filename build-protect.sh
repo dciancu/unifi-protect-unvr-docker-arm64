@@ -5,7 +5,12 @@ set -euo pipefail
 SCRIPT_DIR="$(dirname "$0")"
 cd "$SCRIPT_DIR"
 
+opts=''
 image_name="${DOCKER_IMAGE:-dciancu/unifi-protect-unvr-docker-arm64}"
+
+if [[ -n "${DOCKER_NO_CACHE+x}" ]]; then
+    opts='--no-cache'
+fi
 
 if [[ -n "${BUILD_TEST+x}" ]]; then
     if [[ -n "${BUILD_PRUNE+x}" ]]; then
@@ -15,11 +20,11 @@ if [[ -n "${BUILD_TEST+x}" ]]; then
     fi
 
     if [[ -n "${BUILD_EDGE+x}" ]]; then
-        docker build -f protect.Dockerfile -t "${image_name}:test-edge" .
+        docker build $opts -f protect.Dockerfile -t "${image_name}:test-edge" .
     fi
 
     if [[ -n "${BUILD_STABLE+x}" ]] || [[ -z "${BUILD_EDGE+x}" ]]; then
-        docker build -f protect.Dockerfile --build-arg PROTECT_STABLE=1 -t "${image_name}:test-stable" --pull .
+        docker build $opts -f protect.Dockerfile --build-arg PROTECT_STABLE=1 -t "${image_name}:test-stable" --pull .
     fi
 else
     if [[ -n "${BUILD_PRUNE+x}" ]]; then
@@ -29,7 +34,7 @@ else
     fi
 
     if [[ -n "${BUILD_EDGE+x}" ]]; then
-        docker build -f protect.Dockerfile -t "${image_name}:edge" .
+        docker build $opts -f protect.Dockerfile -t "${image_name}:edge" .
         if [[ -n "${BUILD_TAG_VERSION+x}" ]]; then
             version="$(docker run --rm "${image_name}:edge" dpkg -s unifi-protect | grep '^Version:' | cut -d ' ' -f 2 | tr -d '\n')"
             docker tag "${image_name}:edge" "${image_name}:v${version}"
@@ -39,7 +44,7 @@ else
     fi
 
     if [[ -n "${BUILD_STABLE+x}" ]] || [[ -z "${BUILD_EDGE+x}" ]]; then
-        docker build -f protect.Dockerfile --build-arg PROTECT_STABLE=1 -t "${image_name}:stable" --pull --platform linux/arm64 .
+        docker build $opts -f protect.Dockerfile --build-arg PROTECT_STABLE=1 -t "${image_name}:stable" --pull --platform linux/arm64 .
         if [[ -n "${BUILD_TAG_VERSION+x}" ]]; then
             firmware_version="$(tr -d '\n' < firmware/version)"
             docker tag "${image_name}:stable" "${image_name}:${firmware_version}"

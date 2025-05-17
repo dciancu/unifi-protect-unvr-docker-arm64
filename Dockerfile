@@ -1,3 +1,78 @@
+# multi-stage build Protect
+
+
+FROM debian:12 AS firmware-base
+ARG DEBIAN_FRONTEND=noninteractive
+SHELL ["/usr/bin/env", "bash", "-c"]
+RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
+    set -euo pipefail \
+    && apt-get update \
+    && apt-get install -y apt-transport-https ca-certificates \
+    && sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update \
+    && apt-get upgrade -y \
+    && apt-get dist-upgrade -y \
+    && apt-get --purge autoremove -y \
+    && apt-get install -y wget jq binwalk dpkg-repack
+
+
+FROM firmware-base AS firmware
+ARG FW_URL
+ARG FW_EDGE
+ARG FW_ALL_DEBS
+ARG FW_UNSTABLE
+ARG FW_UPDATE_URL='https://fw-update.ubnt.com/api/firmware?filter=eq~~platform~~unvr&filter=eq~~channel~~release&sort=-version&limit=10'
+ARG DEBIAN_FRONTEND=noninteractive
+SHELL ["/usr/bin/env", "bash", "-c"]
+
+COPY firmware.txt /opt/
+
+RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
+    set -euo pipefail \
+    && FW_URL="${FW_URL:-}" \
+    && apt-get update \
+    && apt-get upgrade -y \
+    && apt-get dist-upgrade -y \
+    && apt-get --purge autoremove -y \
+    && mkdir -p /opt/firmware-build && cd /opt/firmware-build \
+    && if [ -z "$FW_URL" ] && [ -z "${FW_EDGE:-}" ]; then FW_URL="$(tr -d '\n' < /opt/firmware.txt)"; fi  \
+    # if FW_URL not set
+    && test ! -z "$FW_URL" || { shopt -s lastpipe && wget -q --output-document - "$FW_UPDATE_URL" | \
+        { if [ -n "${FW_UNSTABLE:-}" ]; then \
+            # FW_UNSTABLE set, skip probability_computed
+            jq -r '._embedded.firmware[0]._links.data.href'; \
+        else \
+            # FW_UNSTABLE not set, check probability_computed
+            jq -r '._embedded.firmware | map(select(.probability_computed == 1))[0] | ._links.data.href'; \
+        fi; } | \
+        FW_URL="$(</dev/stdin)" && shopt -u lastpipe; } \
+    && echo "FW_URL: ${FW_URL}" \
+    && wget --no-verbose --show-progress --progress=dot:giga -O fwupdate.bin "$FW_URL" \
+    && sha1sum fwupdate.bin | tee fwupdate.sha1 \
+    && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login build \
+    && binwalk --run-as=build -e fwupdate.bin \
+    && rm fwupdate.bin \
+    && cp _fwupdate.bin.extracted/squashfs-root/usr/lib/version . \
+    && dpkg-query --admindir=_fwupdate.bin.extracted/squashfs-root/var/lib/dpkg/ -W -f='${package} | ${Maintainer}\n' | \
+        grep -E '@ubnt.com|@ui.com' | cut -d '|' -f 1 > packages.txt \
+    && cat packages.txt \
+    && mkdir debs-build && cd debs-build \
+    && while read pkg; do \
+        dpkg-repack --root=../_fwupdate.bin.extracted/squashfs-root/ --arch=arm64 "$pkg"; \
+    done < ../packages.txt \
+    && ls -lh \
+    # ALL_DEBS set
+    && test -z "${FW_ALL_DEBS:-}" || (mkdir ../all-debs && cp * ../all-debs/) \
+    && mkdir ../debs \
+    && cp ubnt-archive-keyring_* unifi-core_* ubnt-tools_* ulp-go_* unifi-assets-unvr_* unifi-directory_* uos_* node* \
+        unifi-email-templates-all_* ../debs/ \
+    && mkdir ../unifi-protect-deb \
+    && cp unifi-protect_* ../unifi-protect-deb/ \
+    && cd .. \
+    && rm -r _fwupdate.bin.extracted debs-build \
+    && (cd / && rm -rf $(ls -A | grep -vE 'opt|sys|proc|dev'); exit 0) && exit 0
+
+
 FROM arm64v8/debian:11 AS protect
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -5,7 +80,6 @@ SHELL ["/usr/bin/env", "bash", "-c"]
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
-    && echo -e '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d \
     && apt-get update \
     && apt-get install -y apt-transport-https ca-certificates \
     && sed -i 's/http:/https:/g' /etc/apt/sources.list \
@@ -40,7 +114,6 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         systemd-timesyncd \
         sysstat \
         net-tools \
-    && rm -f /usr/sbin/policy-rc.d \
     && find /etc/systemd/system \
         /lib/systemd/system \
         -path '*.wants/*' \
@@ -60,21 +133,20 @@ RUN set -euo pipefail \
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
-    && echo -e '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d \
     && curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor \
         | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
     && echo "deb https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" > /etc/apt/sources.list.d/postgresql.list \
     && apt-get update \
-    && apt-get --no-install-recommends -y install postgresql-14 \
-    && rm -f /usr/sbin/policy-rc.d
+    && apt-get --no-install-recommends -y install postgresql-14
 
-COPY firmware/version /usr/lib/version
 COPY files/lib /lib/
+
+COPY --from=firmware /opt/firmware-build/version /usr/lib/version
+COPY --from=firmware /opt/firmware-build/debs /opt/debs
+COPY --from=firmware /opt/firmware-build/unifi-protect-deb /opt/unifi-protect-deb
 
 ARG PROTECT_STABLE
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
-    --mount=type=bind,source=firmware/debs,target=/opt/debs \
-    --mount=type=bind,source=firmware/unifi-protect-deb,target=/opt/unifi-protect-deb \
     set -euo pipefail \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
@@ -88,7 +160,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && test -z "$PROTECT_STABLE" || apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb \
-    && echo -e '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d \
+    && echo 'exit 0' > /usr/sbin/policy-rc.d \
     # Enable storage via ustorage instead of grpc ustate.
     # This will most likely need to be updated with each firmware release.
     && sed -i '/return qe()?i.push/{s//return qe(),!0?i.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js \
@@ -99,9 +171,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && touch /usr/bin/uled-ctrl \
     && chmod +x /usr/bin/uled-ctrl \
     && chown root:root /etc/sudoers.d/* \
-    && echo -e '\n\nexport PGHOST=127.0.0.1\n' >> /usr/lib/ulp-go/scripts/envs.sh \
-    && mkdir -p /data/unifi-core/config/http \
-    && rm -f /usr/sbin/policy-rc.d
+    && echo -e '\n\nexport PGHOST=127.0.0.1\n' >> /usr/lib/ulp-go/scripts/envs.sh
 
 COPY files/sbin /sbin/
 COPY files/usr /usr/

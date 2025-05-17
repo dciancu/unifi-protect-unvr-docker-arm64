@@ -16,7 +16,7 @@ echo "Latest Firmware: ${LATEST_FIRMWARE}"
 echo "Latest Repo Firmware: ${LATEST_REPO_FIRMWARE}"
 
 if [[ "$LATEST_FIRMWARE" == "$LATEST_REPO_FIRMWARE" ]]; then
-    echo -e "${GREEN}Latest firmware in repo ok.${NC}"
+    echo -e "${GREEN}Latest firmware in repo up-to-date.${NC}"
     exit 0
 else
     echo -e "${RED}Found newer latest firmware!${NC}"
@@ -24,8 +24,9 @@ else
         | jq -r '._embedded.firmware | map(select(.probability_computed == 1))[0] | ._links.data.href')"
     if [[ "$LATEST_STABLE_FIRMWARE" != "$LATEST_FIRMWARE" ]]; then
         echo -e "${RED}WARN: Latest firmware is not marked as stable!${NC}"
+        test -n "${FW_EDGE:-}" && exit 1 || exit 0
     else
         echo -e "${GREEN}Latest firmware is marked as stable.${NC}"
+        exit 1
     fi
-    exit 1
 fi

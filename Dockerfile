@@ -37,7 +37,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && mkdir -p /opt/firmware-build && cd /opt/firmware-build \
     && if [ -z "$FW_URL" ] && [ -z "${FW_EDGE:-}" ]; then FW_URL="$(tr -d '\n' < /opt/firmware.txt)"; fi  \
     # if FW_URL not set
-    && test ! -z "$FW_URL" || { shopt -s lastpipe && wget -q --output-document - "$FW_UPDATE_URL" | \
+    && if [ -z "$FW_URL" ]; then { shopt -s lastpipe && wget -q --output-document - "$FW_UPDATE_URL" | \
         { if [ -n "${FW_UNSTABLE:-}" ]; then \
             # FW_UNSTABLE set, skip probability_computed
             jq -r '._embedded.firmware[0]._links.data.href'; \
@@ -45,7 +45,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
             # FW_UNSTABLE not set, check probability_computed
             jq -r '._embedded.firmware | map(select(.probability_computed == 1))[0] | ._links.data.href'; \
         fi; } | \
-        FW_URL="$(</dev/stdin)" && shopt -u lastpipe; } \
+        FW_URL="$(</dev/stdin)" && shopt -u lastpipe; }; fi \
     && echo "FW_URL: ${FW_URL}" \
     && wget --no-verbose --show-progress --progress=dot:giga -O fwupdate.bin "$FW_URL" \
     && sha1sum fwupdate.bin | tee fwupdate.sha1 \
@@ -62,7 +62,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     done < ../packages.txt \
     && ls -lh \
     # ALL_DEBS set
-    && test -z "${FW_ALL_DEBS:-}" || (mkdir ../all-debs && cp * ../all-debs/) \
+    && if [ -n "${FW_ALL_DEBS:-}"]; then mkdir ../all-debs && cp * ../all-debs/; fi \
     && mkdir ../debs \
     && cp ubnt-archive-keyring_* unifi-core_* ubnt-tools_* ulp-go_* unifi-assets-unvr_* unifi-directory_* uos_* node* \
         unifi-email-templates-all_* ../debs/ \
@@ -153,13 +153,13 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
     # PROTECT_STABLE not set
-    && test ! -z "$PROTECT_STABLE" || apt-get -y --no-install-recommends --force-yes \
+    && if [ -z "$PROTECT_STABLE" ]; then apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-        install /opt/debs/*.deb unifi-protect \
+        install /opt/debs/*.deb unifi-protect; fi \
     # PROTECT_STABLE set
-    && test -z "$PROTECT_STABLE" || apt-get -y --no-install-recommends --force-yes \
+    && if [ -n "$PROTECT_STABLE" ]; then apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-        install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb \
+        install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb; fi \
     && echo 'exit 0' > /usr/sbin/policy-rc.d \
     # Enable storage via ustorage instead of grpc ustate.
     # This will most likely need to be updated with each firmware release.

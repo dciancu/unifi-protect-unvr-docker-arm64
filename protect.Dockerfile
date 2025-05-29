@@ -77,13 +77,13 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
     # PROTECT_STABLE not set
-    && test ! -z "$PROTECT_STABLE" || apt-get -y --no-install-recommends --force-yes \
+    && if [ -z "$PROTECT_STABLE" ]; then apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-        install /opt/debs/*.deb unifi-protect \
+        install /opt/debs/*.deb unifi-protect; fi \
     # PROTECT_STABLE set
-    && test -z "$PROTECT_STABLE" || apt-get -y --no-install-recommends --force-yes \
+    && if [ -n "$PROTECT_STABLE" ]; then apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-        install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb \
+        install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb; fi \
     && echo 'exit 0' > /usr/sbin/policy-rc.d \
     # Enable storage via ustorage instead of grpc ustate.
     # This will most likely need to be updated with each firmware release.

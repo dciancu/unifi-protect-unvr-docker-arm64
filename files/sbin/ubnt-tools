@@ -38,9 +38,9 @@ if [ "${1:-}" = 'id' ]; then
     # echo "board.sysid=0xe970" # UCK_G2_PLUS - does not work
     # echo "board.sysid=0xea13" # UDM_SE - does not work
     # echo "board.sysid=0xea15" # UDM_PRO - does not work
-    # echo "board.sysid=0xa6ca" # UCGMAX - does not work
-    # echo "board.sysid=0xa6d0" # UCGFIBER - does not work
-    # echo "board.sysid=0xa6aa" # UDR7 - does not work
+    # echo "board.sysid=0xa69a" # UCGMAX - does not work
+    # echo "board.sysid=0xa6a8" # UCGFIBER - does not work
+    # echo "board.sysid=0xa67a" # UDR7 - does not work
     # echo "board.sysid=0xb719" # UVC_NVR - old unifi-video
     # echo "board.sysid=0xea51" # UNAS_PRO - not applicable
 

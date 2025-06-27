@@ -8,7 +8,7 @@ if [ "${1:-}" = 'id' ]; then
     serial=$(cat /sys/class/net/$(ip route get 8.8.8.8 | grep -Po '(?<=(dev ))(\S+)')/address | sed 's/://g')
 
     if [ -f /etc/default/device ]; then
-        DEVICE="$(tr -d '-n' < /etc/default/device)"
+        DEVICE="$(tr -d '\n' < /etc/default/device)"
     fi
     case "${DEVICE:-UNVR}" in
         'UNVR')

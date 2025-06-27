@@ -17,6 +17,8 @@ disk="${STORAGE_DISK:-/dev/sda1}"
 echo '#!/bin/bash' > /etc/default/storage_disk
 echo "STORAGE_DISK=${disk}" >> /etc/default/storage_disk
 
+echo "${DEVICE:-UNVR}" > /etc/default/device
+
 if [[ "$debug" == 'true' || "${DEBUG_STORAGE:-false}" == 'true' ]]; then
     echo 'echo "$0" "$@" >> /var/log/storage_disk_debug.log' >> /etc/default/storage_disk
     echo '' >> /var/log/storage_disk_debug.log

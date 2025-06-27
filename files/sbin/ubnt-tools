@@ -7,23 +7,43 @@ if [ "${1:-}" = 'id' ]; then
     uuid=$(cat /data/uuid.txt)
     serial=$(cat /sys/class/net/$(ip route get 8.8.8.8 | grep -Po '(?<=(dev ))(\S+)')/address | sed 's/://g')
 
-    # echo "board.sysid=0xb719" # UVC_NVR
-    # echo "board.sysid=0xe970" # UCK_G2_PLUS
-    # echo "board.sysid=0xea13" # UDM_SE
-    # echo "board.sysid=0xea15" # UDM_PRO
-    echo "board.sysid=0xea16" # UNVR4
-    # echo "board.sysid=0xea1a" # UNVR4
-    # echo "board.sysid=0xea20" # UNVR_PRO
-    # echo "board.sysid=0xea3f" # ENVR
-    # echo "board.sysid=0xea36" # UDMPROMAX
-    # echo "board.sysid=0xea2a" # UDW
-    # echo "board.sysid=0xa6ca" # UCGMAX
-    # echo "board.sysid=0xa6d0" # UCGFIBER
-    # echo "board.sysid=0xffff" # MAC_OS
-    # echo "board.sysid=0xa6aa" # UDR7
+    if [ -f /etc/default/device ]; then
+        DEVICE="$(tr -d '-n' < /etc/default/device)"
+    fi
+    case "${DEVICE:-UNVR}" in
+        'UNVR')
+            echo "board.sysid=0xea16" # UNVR4 - default
+            # echo "board.sysid=0xea1a" # UNVR4 - works too
+            echo "board.name=UniFi Network Video Recorder"
+            echo "board.shortname=UNVR";;
+        'UNVR_PRO')
+            echo "board.sysid=0xea20"
+            echo "board.name=UniFi Network Video Recorder Pro"
+            echo "board.shortname=UNVRPRO";;
+        'MAC_OS')
+            echo "board.sysid=0xffff"
+            echo "board.name=UniFi Network Video Recorder"
+            echo "board.shortname=UNVR";;
+        'ENVR')
+            echo "board.sysid=0xea3f"
+            echo "board.name=UniFi Enterprise Network Video Recorder"
+            echo "board.shortname=ENVR";;
+        *)
+            echo "ERROR: Unknown device '${DEVICE}'"
+            exit 1;;
+    esac
 
-    echo "board.name=UniFi Network Video Recorder"
-    echo "board.shortname=UNVR"
+    # echo "board.sysid=0xea36" # UDMPROMAX - does not work
+    # echo "board.sysid=0xea2a" # UDW - does not work
+    # echo "board.sysid=0xe970" # UCK_G2_PLUS - does not work
+    # echo "board.sysid=0xea13" # UDM_SE - does not work
+    # echo "board.sysid=0xea15" # UDM_PRO - does not work
+    # echo "board.sysid=0xa6ca" # UCGMAX - does not work
+    # echo "board.sysid=0xa6d0" # UCGFIBER - does not work
+    # echo "board.sysid=0xa6aa" # UDR7 - does not work
+    # echo "board.sysid=0xb719" # UVC_NVR - old unifi-video
+    # echo "board.sysid=0xea51" # UNAS_PRO - not applicable
+
     echo "board.subtype="
     echo "board.reboot=30"
     echo "board.upgrade=310"

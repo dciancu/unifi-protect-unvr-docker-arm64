@@ -159,13 +159,15 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     # PROTECT_STABLE set
     && if [ -n "$PROTECT_STABLE" ]; then apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-        install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb; fi \
-    && echo 'exit 0' > /usr/sbin/policy-rc.d \
+        install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb; fi
+
+RUN \
     # Enable storage via ustorage instead of grpc ustate.
     # This will most likely need to be updated with each firmware release.
-    && if ! sed -i '/return qe()?i.push/{s//return qe(),!0?i.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js; then \
+    if ! sed -i '/return Ke()?i.push/{s//return Ke(),!0?i.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js; then \
         echo 'ERROR: sed failed, check unifi-core/app/service.js contents!' && exit 1; \
     fi \
+    && echo 'exit 0' > /usr/sbin/policy-rc.d \
     && mv /sbin/mdadm /sbin/mdadm.orig \
     && mv /sbin/ubnt-tools /sbin/ubnt-tools.orig \
     && systemctl enable storage_disk dbpermissions fix_hosts \

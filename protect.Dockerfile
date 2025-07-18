@@ -87,7 +87,9 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && echo 'exit 0' > /usr/sbin/policy-rc.d \
     # Enable storage via ustorage instead of grpc ustate.
     # This will most likely need to be updated with each firmware release.
-    && sed -i '/return qe()?i.push/{s//return qe(),!0?i.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js \
+    && if ! sed -i '/return qe()?i.push/{s//return qe(),!0?i.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js; then \
+        echo 'ERROR: sed failed, check unifi-core/app/service.js contents!' && exit 1; \
+    fi \
     && mv /sbin/mdadm /sbin/mdadm.orig \
     && mv /sbin/ubnt-tools /sbin/ubnt-tools.orig \
     && systemctl enable storage_disk dbpermissions fix_hosts \

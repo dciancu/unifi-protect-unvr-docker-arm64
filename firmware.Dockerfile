@@ -52,7 +52,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     done < ../packages.txt \
     && ls -lh \
     # ALL_DEBS set
-    && if [ -n "${FW_ALL_DEBS:-}"]; then mkdir ../all-debs && cp * ../all-debs/; fi \
+    && if [ -n "${FW_ALL_DEBS:-}" ]; then mkdir ../all-debs && cp * ../all-debs/; fi \
     && mkdir ../debs \
     && cp ubnt-archive-keyring_* unifi-core_* ubnt-tools_* ulp-go_* unifi-assets-unvr_* unifi-directory_* uos_* node* \
         unifi-email-templates-all_* ../debs/ \

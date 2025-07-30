@@ -4,7 +4,7 @@
 FROM debian:12 AS firmware-base
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
-RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=private --mount=target=/var/cache/apt,type=cache,sharing=private \
     set -euo pipefail \
     && apt-get update \
     && apt-get install -y apt-transport-https ca-certificates \
@@ -78,7 +78,7 @@ FROM arm64v8/debian:11 AS protect
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
 
-RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=private --mount=target=/var/cache/apt,type=cache,sharing=private \
     set -euo pipefail \
     && apt-get update \
     && apt-get install -y apt-transport-https ca-certificates \
@@ -131,7 +131,7 @@ RUN set -euo pipefail \
         | sudo tee /etc/apt/preferences.d/99nginx \
     && cat /etc/apt/preferences.d/99nginx
 
-RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=private --mount=target=/var/cache/apt,type=cache,sharing=private \
     set -euo pipefail \
     && curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor \
         | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \

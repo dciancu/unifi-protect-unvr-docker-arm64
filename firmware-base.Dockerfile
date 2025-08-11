@@ -1,4 +1,4 @@
-FROM debian:12 AS firmware-base
+FROM debian:trixie AS firmware-base
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \

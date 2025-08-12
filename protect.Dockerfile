@@ -76,19 +76,19 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
-    # PROTECT_STABLE not set
+    # PROTECT_STABLE not set \
     && if [ -z "$PROTECT_STABLE" ]; then apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb unifi-protect; fi \
-    # PROTECT_STABLE set
+    # PROTECT_STABLE set \
     && if [ -n "$PROTECT_STABLE" ]; then apt-get -y --no-install-recommends --force-yes \
         -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
         install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb; fi \
     && rm -r /opt/debs /opt/unifi-protect-deb
 
 RUN \
-    # Enable storage via ustorage instead of grpc ustate.
-    # This will most likely need to be updated with each firmware release.
+    # Enable storage via ustorage instead of grpc ustate. \
+    # This will most likely need to be updated with each firmware release. \
     if ! sed -i '/return Ke()?i.push/{s//return Ke(),!0?i.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js; then \
         echo 'ERROR: sed failed, check unifi-core/app/service.js contents!' && exit 1; \
     fi \

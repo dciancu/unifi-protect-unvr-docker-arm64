@@ -49,7 +49,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && echo "FW_URL: ${FW_URL}" \
     && wget --no-verbose --show-progress --progress=dot:giga -O fwupdate.bin "$FW_URL" \
     && sha1sum fwupdate.bin | tee fwupdate.sha1 \
-    && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login build \
+    && useradd --comment '' --shell /bin/bash build \
     && binwalk --run-as=build -e fwupdate.bin \
     && rm fwupdate.bin \
     && cp _fwupdate.bin.extracted/squashfs-root/usr/lib/version . \

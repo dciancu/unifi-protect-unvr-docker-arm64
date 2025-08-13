@@ -16,6 +16,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     # net-tools (arp command) is needed by Protect to adopt ONVIF cameras \
     && apt-get --no-install-recommends -y install \
         vim \
+        adduser \
         inotify-tools \
         curl \
         wget \

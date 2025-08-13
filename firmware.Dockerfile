@@ -39,7 +39,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         && exit 0; \
     fi \
     && sha1sum fwupdate.bin | tee fwupdate.sha1 \
-    && useradd --comment '' --shell /bin/bash build \
+    && useradd --shell /bin/bash build \
     && binwalk --run-as=build -e fwupdate.bin \
     && rm fwupdate.bin \
     && cp _fwupdate.bin.extracted/squashfs-root/usr/lib/version . \

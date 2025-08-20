@@ -20,10 +20,13 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 
 ## Usage
 
-You need to build the image using the `build.sh` script or `Dockerfile` (see [Building](#building) section for details).  
+You need to build the image using the `build.sh` script or `Dockerfile` (see [Building](#building) and [Config](#config) sections for details).  
 This repo doesn't have prebuilt images available. This is to prevent redistribution of Ubiquiti's intelectual property.
 
-Run the container using `docker compose` with the provided `docker-compose.yml`.  
+Run the container using `docker compose` with the provided `docker-compose.yml`:  
+```
+docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+```
 **Make sure you have read the below sections on [Issues running systemd inside docker](#issues-running-systemd-inside-docker) and [Issues with remote access](#issues-with-remote-access).**
 
 For the latest features and fixes always use the latest Protect version.  

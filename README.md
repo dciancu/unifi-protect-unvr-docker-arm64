@@ -44,16 +44,26 @@ docker build -t protect .
 docker build -t protect --build-arg PROTECT_STABLE=1 .
 ```
 
+Build arguments (`Dockerfile` usage):
+- Set `PROTECT_STABLE` when building Protect to build `stable` image - uses Protect version packaged in UNVR firmware.  
+  If this is not set, the `edge` image is built by default - uses latest Protect version.
+- Set `PROTECT_URL` when building Protect to download the `unifi-protect` deb package from a custom link.
+- Set `FW_URL` when building firmware to download the firmware binary from a custom link.
+- Set `FW_EDGE` when building firmware to download the latest firmware, instead of the supported repo firmware.
+- Set `FW_UNSTABLE` when building firmware to download the latest version, skipping the stable flag.
+- Set `FW_ALL_DEBS` when building firmware to extract and save all packages.
+
 `build.sh` usage:
 ```
 BUILD_EDGE=1 BUILD_TAG_VERSION=1 bash build.sh
 ```
 
-Environment variables:
+Environment variables (`build.sh` usage):
 - Set `DOCKER_IMAGE` when building Protect to use a custom image tag.
 - Set `DOCKER_NO_CACHE` when building firmware or Protect to disable build cache (`--no-cache` option).
 - Set `BUILD_STABLE` when building Protect to build `stable` image - uses Protect version packaged in UNVR firmware.
 - Set `BUILD_EDGE` when building Protect to build `edge` image - uses latest Protect version.
+- Set `PROTECT_URL` when building Protect to download the `unifi-protect` deb package from a custom link.
 - Set `BUILD_TAG_VERSION` when building Protect to tag images with Protect version.
 - Set `BUILD_PRUNE` when building Protect to delete **ALL** images and prune build cache.
 - Set `BUILD_TEST` when building Protect to build test images.

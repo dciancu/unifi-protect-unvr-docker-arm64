@@ -32,6 +32,17 @@ docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
 For the latest features and fixes always use the latest Protect version.  
 Some cameras may not adopt/work properly if Protect version is not new enough or the storage capacity is not 100 GB at least.  
 
+### macOS Usage
+
+Use `docker-compose.macos.yml`.
+```
+docker compose -f docker-compose.macos.yml -f docker-compose.override.yml up -d
+```
+
+Remote access via the cloud does not work with Docker on macOS, see https://github.com/dciancu/unifi-protect-unvr-docker-arm64/issues/25.  
+Use a Debian VM instead (try with [UTM](https://mac.getutm.app/), it is open source).  
+If running inside a VM, make sure to bridge its net adapter or forward ports from host to the VM.
+
 ## Building
 
 Use the `build.sh` script or `Dockerfile`.  
@@ -111,17 +122,6 @@ services:
 `STORAGE_DISK` should point to your disk holding the `storage` folder volume (see `docker-compose.yml`). **Make sure you have access to the device inside the container**, or mount it using `devices` key in `docker-compose.override.yml`.  
 `DEVICE` - check [ubnt-tools](files/sbin/ubnt-tools) script for working devices (note: network interfaces may require manual configuration).  
 Protect video is at `/srv` volume inside container.
-
-### macOS
-
-Use `docker-compose.macos.yml`.
-```
-docker compose -f docker-compose.macos.yml -f docker-compose.override.yml up -d
-```
-
-Remote access via the cloud does not work with Docker on macOS, see https://github.com/dciancu/unifi-protect-unvr-docker-arm64/issues/25.  
-Use a Debian VM instead (try with [UTM](https://mac.getutm.app/), it is open source).  
-If running inside a VM, make sure to bridge its net adapter or forward ports from host to the VM.
 
 ### Network
 

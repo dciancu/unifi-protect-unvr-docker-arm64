@@ -51,11 +51,11 @@ This will download and extract the firmware packages from the latest version ava
 `Dockerfile` usage:
 ```
 # build edge
-docker build -t protect .
+docker build -t dciancu/unifi-protect-unvr-docker-arm64 .
 ```
 ```
 # build stable
-docker build -t protect --build-arg PROTECT_STABLE=1 .
+docker build -t dciancu/unifi-protect-unvr-docker-arm64 --build-arg PROTECT_STABLE=1 .
 ```
 
 Build arguments (`Dockerfile` usage):

@@ -82,6 +82,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
+    # install /usr/bin/ms (ms package) shared libs not set in package deps \
+    && apt-get --no-install-recommends -y install libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libglib2.0-0 \
     # PROTECT_STABLE not set \
     && if [ -z "$PROTECT_STABLE" ]; then \
         if [ -z "$PROTECT_URL" ]; then \

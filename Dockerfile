@@ -168,15 +168,15 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         && AIFC_URL="$(wget -q --output-document - "$AIFC_UPDATE_URL" | jq -r '._embedded.firmware[0]._links.data.href')" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-protect.deb "$PROTECT_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_URL" \
-        && apt-get -y --no-install-recommends --force-yes \
-            -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
+        && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
             install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/unifi-protect.deb \
         && rm /opt/ai-feature-console.deb /opt/unifi-protect.deb; \
     fi \
     # PROTECT_STABLE set \
-    && if [ -n "$PROTECT_STABLE" ]; then apt-get -y --no-install-recommends --force-yes \
-        -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-        install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb; fi \
+    && if [ -n "$PROTECT_STABLE" ]; then \
+        apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
+        install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb; \
+    fi \
     && rm -r /opt/debs /opt/unifi-protect-deb
 
 RUN \

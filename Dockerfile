@@ -150,6 +150,7 @@ COPY --from=firmware /opt/firmware-build/unifi-protect-deb /opt/unifi-protect-de
 ARG PROTECT_STABLE
 ARG PROTECT_URL
 ARG PROTECT_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~unifi-protect&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
+ARG AIFC_UPDATE_URL='https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~ai-feature-console&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64'
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
     && PROTECT_URL="${PROTECT_URL:-}" \
@@ -162,11 +163,13 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         if [ -z "$PROTECT_URL" ]; then \
             PROTECT_URL="$(wget -q --output-document - "$PROTECT_UPDATE_URL" | jq -r '._embedded.firmware[0]._links.data.href')"; \
         fi \
+        && AIFC_URL="$(wget -q --output-document - "$AIFC_UPDATE_URL" | jq -r '._embedded.firmware[0]._links.data.href')" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-protect.deb "$PROTECT_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_URL" \
         && apt-get -y --no-install-recommends --force-yes \
             -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-            install /opt/debs/*.deb /opt/unifi-protect.deb \
-        && rm /opt/unifi-protect.deb; \
+            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/unifi-protect.deb \
+        && rm /opt/ai-feature-console.deb /opt/unifi-protect.deb; \
     fi \
     # PROTECT_STABLE set \
     && if [ -n "$PROTECT_STABLE" ]; then apt-get -y --no-install-recommends --force-yes \
@@ -203,3 +206,4 @@ LABEL project_version='5.7.0'
 LABEL PROTECT_URL=${PROTECT_URL}
 LABEL PROTECT_STABLE=${PROTECT_STABLE}
 LABEL PROTECT_UPDATE_URL=${PROTECT_UPDATE_URL}
+LABEL AIFC_UPDATE_URL=${AIFC_UPDATE_URL}

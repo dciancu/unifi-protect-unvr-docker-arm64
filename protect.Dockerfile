@@ -70,6 +70,7 @@ COPY firmware/version /usr/lib/version
 COPY files/lib /lib/
 
 ARG PROTECT_STABLE
+ARG AIFC_URL
 ARG PROTECT_URL
 ARG PROTECT_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~unifi-protect&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
 ARG AIFC_UPDATE_URL='https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~ai-feature-console&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64'
@@ -77,6 +78,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     --mount=type=bind,source=firmware/debs,target=/opt/debs \
     --mount=type=bind,source=firmware/unifi-protect-deb,target=/opt/unifi-protect-deb \
     set -euo pipefail \
+    && AIFC_URL="${AIFC_URL:-}" \
     && PROTECT_URL="${PROTECT_URL:-}" \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
@@ -89,7 +91,9 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         if [ -z "$PROTECT_URL" ]; then \
             PROTECT_URL="$(wget -q --output-document - "$PROTECT_UPDATE_URL" | jq -r '._embedded.firmware[0]._links.data.href')"; \
         fi \
-        && AIFC_URL="$(wget -q --output-document - "$AIFC_UPDATE_URL" | jq -r '._embedded.firmware[0]._links.data.href')" \
+        && if [ -z "$AIFC_URL" ]; then \
+            AIFC_URL="$(wget -q --output-document - "$AIFC_UPDATE_URL" | jq -r '._embedded.firmware[0]._links.data.href')"; \
+        fi \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-protect.deb "$PROTECT_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_URL" \
         && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \

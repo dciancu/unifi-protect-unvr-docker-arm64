@@ -14,7 +14,10 @@ if [[ -n "${DOCKER_NO_CACHE+x}" ]]; then
     opts="$opts --no-cache"
 fi
 if [[ -n "${PROTECT_URL+x}" ]]; then
-    opts="$opts --build-arg 'PROTECT_URL=${PROTECT_URL}'"
+    opts="$opts --build-arg PROTECT_URL=${PROTECT_URL}"
+fi
+if [[ -n "${AIFC_URL+x}" ]]; then
+    opts="$opts --build-arg AIFC_URL=${AIFC_URL}"
 fi
 
 if [[ -n "${BUILD_TEST+x}" ]]; then

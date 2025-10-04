@@ -103,7 +103,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     # PROTECT_STABLE set \
     && if [ -n "$PROTECT_STABLE" ]; then \
         apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-        install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb; \
+            install /opt/debs/*.deb /opt/unifi-protect-deb/*.deb; \
     fi
 
 RUN \

@@ -150,7 +150,7 @@ COPY --from=firmware /opt/firmware-build/unifi-protect-deb /opt/unifi-protect-de
 ARG PROTECT_STABLE
 ARG PROTECT_URL
 ARG AIFC_URL
-ARG AIFC_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/b45b-uos-deb11-arm64-1.9.2-261c2f21-65da-4789-9208-5a0b76117f65.deb"
+ARG AIFC_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/1152-uos-deb11-arm64-1.9.5-aa073f02-faec-4659-b71a-68fe793233f2.deb"
 ARG PROTECT_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~unifi-protect&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
 ARG AIFC_UPDATE_URL='https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~ai-feature-console&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64'
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \

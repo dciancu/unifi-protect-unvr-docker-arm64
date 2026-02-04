@@ -55,7 +55,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && if [ -n "${FW_ALL_DEBS:-}" ]; then mkdir ../all-debs && cp * ../all-debs/; fi \
     && mkdir ../debs \
     && cp ubnt-archive-keyring_* unifi-core_* ubnt-tools_* ulp-go_* unifi-assets-unvr_* unifi-directory_* uos_* \
-        uos-agent_* node* unifi-email-templates-all_* ../debs/ \
+        uos-agent_* uos-discovery-client_* node* unifi-email-templates-all_* ../debs/ \
     && mkdir ../unifi-protect-deb \
     && cp unifi-protect_* ../unifi-protect-deb/ \
     && cd .. \

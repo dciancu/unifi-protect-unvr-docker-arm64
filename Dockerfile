@@ -158,12 +158,15 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && AIFC_URL="${AIFC_URL:-}" \
     && PROTECT_URL="${PROTECT_URL:-}" \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
-    && mv /bin/systemctl /bin/systemctl.tmp \
-    && echo -e '#!/bin/bash\necho 0' > /bin/systemctl \
-    && chmod +x /bin/systemctl \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
+    && mv /bin/systemctl /bin/systemctl.tmp \
+    && echo -e '#!/bin/bash\necho 0' > /bin/systemctl \
+    && chmod +x /bin/systemctl \
+    && apt-get --no-install-recommends -y install /opt/debs/uos-discovery-client_*_arm64.deb \
+    && mv /bin/systemctl.tmp /bin/systemctl \
+    && systemctl enable uos-discovery-client.service \
     # install /usr/bin/ms (ms package) shared libs not set in package deps \
     && apt-get --no-install-recommends -y install libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libglib2.0-0 \
     # PROTECT_STABLE not set \
@@ -187,8 +190,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
             install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/unifi-protect-deb/*.deb \
         && rm /opt/ai-feature-console.deb; \
     fi \
-    && rm -r /opt/debs /opt/unifi-protect-deb \
-    && mv /bin/systemctl.tmp /bin/systemctl
+    && rm -r /opt/debs /opt/unifi-protect-deb
 
 RUN \
     # Enable storage via ustorage instead of grpc ustate. \

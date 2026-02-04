@@ -82,6 +82,9 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && AIFC_URL="${AIFC_URL:-}" \
     && PROTECT_URL="${PROTECT_URL:-}" \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
+    && mv /bin/systemctl /bin/systemctl.tmp \
+    && echo -e '#!/bin/bash\necho 0' > /bin/systemctl \
+    && chmod +x /bin/systemctl \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
@@ -107,7 +110,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
             install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/unifi-protect-deb/*.deb \
         && rm /opt/ai-feature-console.deb; \
-    fi
+    fi \
+    && mv /bin/systemctl.tmp /bin/systemctl
 
 RUN \
     # Enable storage via ustorage instead of grpc ustate. \

@@ -195,7 +195,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
 RUN \
     # Enable storage via ustorage instead of grpc ustate. \
     # This will most likely need to be updated with each firmware release. \
-    if ! sed -i '/return Xe()?s.push/{s//return Xe(),!0?s.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js; then \
+    if ! sed -i '/return Qe()?s.push/{s//return Qe(),!0?s.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js; then \
         echo 'ERROR: sed failed, check unifi-core/app/service.js contents!' && exit 1; \
     fi \
     && echo 'exit 0' > /usr/sbin/policy-rc.d \

@@ -133,7 +133,6 @@ RUN \
 
 COPY files/sbin /sbin/
 COPY files/usr /usr/
-COPY files/etc /etc/
 
 VOLUME ["/srv", "/data", "/persistent"]
 

@@ -141,7 +141,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=private --mount=target=
     && apt-get update \
     && apt-get --no-install-recommends -y install postgresql-14
 
-COPY files/lib /lib/
+COPY files/etc /etc/
 
 COPY --from=firmware /opt/firmware-build/version /usr/lib/version
 COPY --from=firmware /opt/firmware-build/debs /opt/debs
@@ -158,6 +158,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && AIFC_URL="${AIFC_URL:-}" \
     && PROTECT_URL="${PROTECT_URL:-}" \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
+    && systemctl enable systemd-timesyncd.service \
+    && systemctl enable systemd-time-wait-sync.service \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
     && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \

@@ -10,4 +10,3 @@ ExecStart=/usr/bin/patch_db.sh
 
 [Install]
 WantedBy=postgresql-cluster-14-main-upgrade.service postgresql-cluster-14-protect-upgrade.service
-

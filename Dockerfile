@@ -218,7 +218,7 @@ VOLUME ["/srv", "/data", "/persistent"]
 STOPSIGNAL SIGINT
 CMD ["/lib/systemd/systemd"]
 
-LABEL project_version='6.0.1'
+LABEL project_version='6.0.2'
 LABEL PROTECT_URL=${PROTECT_URL}
 LABEL AIFC_URL=${AIFC_URL}
 LABEL PROTECT_STABLE=${PROTECT_STABLE}

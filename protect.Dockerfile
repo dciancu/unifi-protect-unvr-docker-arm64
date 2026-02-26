@@ -8,6 +8,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get update \
     && apt-get install -y apt-transport-https ca-certificates \
     && sed -i 's/http:/https:/g' /etc/apt/sources.list \
+    && sed -i 's/ main$/ main contrib non-free/g' /etc/apt/sources.list \
     && apt-get update \
     && apt-get -y upgrade \
     && apt-get -y dist-upgrade \

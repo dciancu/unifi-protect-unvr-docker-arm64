@@ -126,7 +126,7 @@ RUN \
     && echo 'exit 0' > /usr/sbin/policy-rc.d \
     && mv /sbin/mdadm /sbin/mdadm.orig \
     && mv /sbin/ubnt-tools /sbin/ubnt-tools.orig \
-    && systemctl enable storage_disk dbpermissions fix_hosts fix_apt_ubiquiti_sources \
+    && systemctl enable storage_disk dbpermissions fix_hosts fix_apt_ubiquiti_sources init_console \
     && sed -i 's/rm -f/rm -rf/' /sbin/pg-cluster-upgrade \
     && touch /usr/bin/uled-ctrl \
     && chmod +x /usr/bin/uled-ctrl \

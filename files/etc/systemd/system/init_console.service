@@ -1,0 +1,12 @@
+[Unit]
+Description=Initialize Console
+Before=basic.target
+After=local-fs.target sysinit.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/init_console.sh
+
+[Install]
+WantedBy=basic.target

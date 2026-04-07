@@ -190,31 +190,31 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     # PROTECT_STABLE not set \
     && if [ -z "$PROTECT_STABLE" ]; then \
         if [ -z "$PROTECT_URL" ]; then \
-            PROTECT_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/unifi-protect/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            PROTECT_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/unifi-protect/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "PROTECT_URL=${PROTECT_URL}"; \
         fi \
         && if [ -z "$AIFC_URL" ]; then \
-            AIFC_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-console/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            AIFC_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-console/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "AIFC_URL=${AIFC_URL}"; \
         fi \
         && if [ -z "$MS_URL" ]; then \
-            MS_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ms/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            MS_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ms/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MS_URL=${MS_URL}"; \
         fi \
         && if [ -z "$MSR_URL" ]; then \
-            MSR_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/msr/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            MSR_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/msr/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MSR_URL=${MSR_URL}"; \
         fi \
         && if [ -z "$MSP_URL" ]; then \
-            MSP_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/msp/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            MSP_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/msp/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MSP_URL=${MSP_URL}"; \
         fi \
         && if [ -z "$MST_URL" ]; then \
-            MST_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/mst/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            MST_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/mst/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MST_URL=${MST_URL}"; \
         fi \
         && if [ -z "$DS_URL" ]; then \
-            DS_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ds/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            DS_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ds/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "DS_URL=${DS_URL}"; \
         fi \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-protect.deb "$PROTECT_URL" \

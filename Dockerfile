@@ -148,13 +148,29 @@ COPY --from=firmware /opt/firmware-build/debs /opt/debs
 COPY --from=firmware /opt/firmware-build/unifi-protect-deb /opt/unifi-protect-deb
 
 ARG PROTECT_STABLE
+# UniFi Protect
 ARG PROTECT_URL
+# AI features on console
 ARG AIFC_URL
+# Unifi Protect Media Server
+ARG MS_URL
+# Media Server Recording Service
+ARG MSR_URL
+# Media Server Playback Service
+ARG MSP_URL
+# Media Server Trascoding Service
+ARG MST_URL
+# Unifi Protect Device Service
+ARG DS_URL
 ARG AIFC_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/f3c8-uos-deb11-arm64-1.9.15-3316d322-b5da-4f44-84a3-e823dfef82be.deb"
-ARG PROTECT_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~unifi-protect&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
-ARG AIFC_UPDATE_URL='https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~ai-feature-console&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64'
+ARG DEB_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~{product}&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
+    && DS_URL="${DS_URL:-}" \
+    && MS_URL="${MS_URL:-}" \
+    && MSR_URL="${MSR_URL:-}" \
+    && MSP_URL="${MSP_URL:-}" \
+    && MST_URL="${MST_URL:-}" \
     && AIFC_URL="${AIFC_URL:-}" \
     && PROTECT_URL="${PROTECT_URL:-}" \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
@@ -174,16 +190,45 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     # PROTECT_STABLE not set \
     && if [ -z "$PROTECT_STABLE" ]; then \
         if [ -z "$PROTECT_URL" ]; then \
-            PROTECT_URL="$(wget -q --output-document - "$PROTECT_UPDATE_URL" | jq -r '._embedded.firmware[0]._links.data.href')"; \
+            PROTECT_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/unifi-protect/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "PROTECT_URL=${PROTECT_URL}"; \
         fi \
         && if [ -z "$AIFC_URL" ]; then \
-            AIFC_URL="$(wget -q --output-document - "$AIFC_UPDATE_URL" | jq -r '._embedded.firmware[0]._links.data.href')"; \
+            AIFC_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-console/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "AIFC_URL=${AIFC_URL}"; \
+        fi \
+        && if [ -z "$MS_URL" ]; then \
+            MS_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ms/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "MS_URL=${MS_URL}"; \
+        fi \
+        && if [ -z "$MSR_URL" ]; then \
+            MSR_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/msr/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "MSR_URL=${MSR_URL}"; \
+        fi \
+        && if [ -z "$MSP_URL" ]; then \
+            MSP_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/msp/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "MSP_URL=${MSP_URL}"; \
+        fi \
+        && if [ -z "$MST_URL" ]; then \
+            MST_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/mst/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "MST_URL=${MST_URL}"; \
+        fi \
+        && if [ -z "$DS_URL" ]; then \
+            DS_URL="$(wget -q --output-document - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ds/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "DS_URL=${DS_URL}"; \
         fi \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-protect.deb "$PROTECT_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ms.deb "$MS_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msr.deb "$MSR_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msp.deb "$MSP_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/mst.deb "$MST_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ds.deb "$DS_URL" \
         && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/unifi-protect.deb \
-        && rm /opt/ai-feature-console.deb /opt/unifi-protect.deb; \
+            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/ms.deb /opt/msr.deb /opt/msp.deb /opt/mst.deb \
+                /opt/ds.deb /opt/unifi-protect.deb \
+        && rm /opt/ai-feature-console.deb /opt/ms.deb /opt/msr.deb /opt/msp.deb /opt/mst.deb /opt/ds.deb \
+            /opt/unifi-protect.deb; \
     fi \
     # PROTECT_STABLE set \
     && if [ -n "$PROTECT_STABLE" ]; then \
@@ -218,10 +263,13 @@ VOLUME ["/srv", "/data", "/persistent"]
 STOPSIGNAL SIGINT
 CMD ["/lib/systemd/systemd"]
 
-LABEL project_version='6.1.0'
+LABEL project_version='6.2.0'
+LABEL PROTECT_STABLE=${PROTECT_STABLE}
+LABEL AIFC_STABLE_URL=${AIFC_STABLE_URL}
 LABEL PROTECT_URL=${PROTECT_URL}
 LABEL AIFC_URL=${AIFC_URL}
-LABEL PROTECT_STABLE=${PROTECT_STABLE}
-LABEL PROTECT_UPDATE_URL=${PROTECT_UPDATE_URL}
-LABEL AIFC_STABLE_URL=${AIFC_STABLE_URL}
-LABEL AIFC_UPDATE_URL=${AIFC_UPDATE_URL}
+LABEL MS_URL=${MS_URL}
+LABEL MSR_URL=${MSR_URL}
+LABEL MSP_URL=${MSP_URL}
+LABEL MST_URL=${MST_URL}
+LABEL DS_URL=${DS_URL}

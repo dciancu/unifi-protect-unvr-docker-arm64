@@ -59,12 +59,6 @@ docker build -t dciancu/unifi-protect-unvr-docker-arm64:stable --build-arg PROTE
 Build arguments (`Dockerfile` usage):
 - Set `PROTECT_STABLE` when building Protect to build `stable` image - uses Protect version packaged in UNVR firmware.  
   If this is not set, the `edge` image is built by default - uses latest Protect version.
-- Set `PROTECT_URL` when building Protect to download the `unifi-protect` deb package from a custom link.
-- Set `AIFC_URL` when building Protect to download the `ai-feature-console` deb package from a custom link.
-- Set `FW_URL` when building firmware to download the firmware binary from a custom link.
-- Set `FW_EDGE` when building firmware to download the latest firmware, instead of the supported repo firmware.
-- Set `FW_UNSTABLE` when building firmware to download the latest version, skipping the stable flag.
-- Set `FW_ALL_DEBS` when building firmware to extract and save all packages.
 
 `build.sh` usage:
 ```
@@ -76,11 +70,18 @@ Environment variables (`build.sh` usage):
 - Set `DOCKER_NO_CACHE` when building firmware or Protect to disable build cache (`--no-cache` option).
 - Set `BUILD_STABLE` when building Protect to build `stable` image - uses Protect version packaged in UNVR firmware.
 - Set `BUILD_EDGE` when building Protect to build `edge` image - uses latest Protect version.
-- Set `PROTECT_URL` when building Protect to download the `unifi-protect` deb package from a custom link.
-- Set `AIFC_URL` when building Protect to download the `ai-feature-console` deb package from a custom link.
 - Set `BUILD_TAG_VERSION` when building Protect to tag images with Protect version.
 - Set `BUILD_PRUNE` when building Protect to delete **ALL** images and prune build cache.
 - Set `BUILD_TEST` when building Protect to build test images.
+
+General arguments (`Dockerfile` usage) / environment variables (`build.sh` usage):
+- Set `PROTECT_URL` when building Protect to download `unifi-protect` deb package from a custom link (`edge` image).
+- Set `AIFC_URL` when building Protect to download `ai-feature-console` deb package from a custom link (`edge` image).
+- Set `MS_URL` when building Protect to download `ms` deb package from a custom link (`edge` image).
+- Set `MSR_URL` when building Protect to download `msr` deb package from a custom link (`edge` image).
+- Set `MSP_URL` when building Protect to download `msp` deb package from a custom link (`edge` image).
+- Set `MST_URL` when building Protect to download `mst` deb package from a custom link (`edge` image).
+- Set `DS_URL` when building Protect to download `ds` deb package from a custom link (`edge` image).
 - Set `FW_URL` when building firmware to download the firmware binary from a custom link.
 - Set `FW_EDGE` when building firmware to download the latest firmware, instead of the supported repo firmware.
 - Set `FW_UNSTABLE` when building firmware to download the latest version, skipping the stable flag.

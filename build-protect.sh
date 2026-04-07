@@ -19,6 +19,21 @@ fi
 if [[ -n "${AIFC_URL+x}" ]]; then
     opts="$opts --build-arg AIFC_URL=${AIFC_URL}"
 fi
+if [[ -n "${MS_URL+x}" ]]; then
+    opts="$opts --build-arg MS_URL=${MS_URL}"
+fi
+if [[ -n "${MSR_URL+x}" ]]; then
+    opts="$opts --build-arg MSR_URL=${MSR_URL}"
+fi
+if [[ -n "${MSP_URL+x}" ]]; then
+    opts="$opts --build-arg MSP_URL=${MSP_URL}"
+fi
+if [[ -n "${MST_URL+x}" ]]; then
+    opts="$opts --build-arg MST_URL=${MST_URL}"
+fi
+if [[ -n "${DS_URL+x}" ]]; then
+    opts="$opts --build-arg DS_URL=${DS_URL}"
+fi
 
 if [[ -n "${BUILD_TEST+x}" ]]; then
     if [[ -n "${BUILD_PRUNE+x}" ]]; then

@@ -152,6 +152,8 @@ ARG PROTECT_STABLE
 ARG PROTECT_URL
 # AI features on console
 ARG AIFC_URL
+# AI features controller
+ARG AIFC2_URL
 # Unifi Protect Media Server
 ARG MS_URL
 # Media Server Recording Service
@@ -172,6 +174,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && MSP_URL="${MSP_URL:-}" \
     && MST_URL="${MST_URL:-}" \
     && AIFC_URL="${AIFC_URL:-}" \
+    && AIFC2_URL="${AIFC2_URL:-}" \
     && PROTECT_URL="${PROTECT_URL:-}" \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
     && systemctl enable systemd-timesyncd.service \
@@ -197,6 +200,10 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
             AIFC_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-console/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "AIFC_URL=${AIFC_URL}"; \
         fi \
+        && if [ -z "$AIFC2_URL" ]; then \
+            AIFC2_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-controller/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "AIFC2_URL=${AIFC2_URL}"; \
+        fi \
         && if [ -z "$MS_URL" ]; then \
             MS_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ms/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MS_URL=${MS_URL}"; \
@@ -219,16 +226,17 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         fi \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-protect.deb "$PROTECT_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-controller.deb "$AIFC2_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ms.deb "$MS_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msr.deb "$MSR_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msp.deb "$MSP_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/mst.deb "$MST_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ds.deb "$DS_URL" \
         && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/ms.deb /opt/msr.deb /opt/msp.deb /opt/mst.deb \
-                /opt/ds.deb /opt/unifi-protect.deb \
-        && rm /opt/ai-feature-console.deb /opt/ms.deb /opt/msr.deb /opt/msp.deb /opt/mst.deb /opt/ds.deb \
-            /opt/unifi-protect.deb; \
+            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ms.deb /opt/msr.deb \
+                /opt/msp.deb /opt/mst.deb /opt/ds.deb /opt/unifi-protect.deb \
+        && rm /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ms.deb /opt/msr.deb /opt/msp.deb \
+            /opt/mst.deb /opt/ds.deb /opt/unifi-protect.deb; \
     fi \
     # PROTECT_STABLE set \
     && if [ -n "$PROTECT_STABLE" ]; then \
@@ -268,6 +276,7 @@ LABEL PROTECT_STABLE=${PROTECT_STABLE}
 LABEL AIFC_STABLE_URL=${AIFC_STABLE_URL}
 LABEL PROTECT_URL=${PROTECT_URL}
 LABEL AIFC_URL=${AIFC_URL}
+LABEL AIFC2_URL=${AIFC2_URL}
 LABEL MS_URL=${MS_URL}
 LABEL MSR_URL=${MSR_URL}
 LABEL MSP_URL=${MSP_URL}

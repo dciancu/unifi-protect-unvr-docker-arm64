@@ -19,6 +19,9 @@ fi
 if [[ -n "${AIFC_URL+x}" ]]; then
     opts="$opts --build-arg AIFC_URL=${AIFC_URL}"
 fi
+if [[ -n "${AIFC2_URL+x}" ]]; then
+    opts="$opts --build-arg AIFC2_URL=${AIFC2_URL}"
+fi
 if [[ -n "${MS_URL+x}" ]]; then
     opts="$opts --build-arg MS_URL=${MS_URL}"
 fi

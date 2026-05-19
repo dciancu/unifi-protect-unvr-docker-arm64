@@ -113,7 +113,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && mv /bin/systemctl.tmp /bin/systemctl \
     && systemctl enable uos-discovery-client.service \
     # install /usr/bin/ms (ms package) shared libs not set in package deps \
-    && apt-get --no-install-recommends -y install libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libglib2.0-0 \
+    && apt-get --no-install-recommends -y install libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 \
+        libgstreamer-plugins-bad1.0-0 libglib2.0-0 \
     # PROTECT_STABLE not set \
     && if [ -z "$PROTECT_STABLE" ]; then \
         if [ -z "$PROTECT_URL" ]; then \

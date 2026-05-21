@@ -16,7 +16,8 @@ Run UniFi Protect UNVR in Docker on ARM64 hardware.
 
 > [!TIP]
 > Works on Raspberry Pi (tested with Pi 4 model B 4GB on Debian 12 Bookworm).  
-> Protect 5.0 added support for third-party cameras via ONVIF, [see here](https://help.ui.com/hc/en-us/articles/26301104828439-Third-Party-Cameras-in-UniFi-Protect).
+> Protect 5.0 added support for third-party cameras via ONVIF, [see here](https://help.ui.com/hc/en-us/articles/26301104828439-Third-Party-Cameras-in-UniFi-Protect).  
+> Protect 7.1 added support for audio and motion detection for third-party cameras.
 
 ## Usage
 

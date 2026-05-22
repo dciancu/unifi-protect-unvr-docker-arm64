@@ -73,9 +73,9 @@ ARG PROTECT_STABLE
 # UniFi Protect
 ARG PROTECT_URL
 # AI features on console
-ARG AIFC_URL
+ARG AIFC_CNS_URL
 # AI features controller
-ARG AIFC2_URL
+ARG AIFC_CTR_URL
 # Unifi Protect Media Server
 ARG MS_URL
 # Media Server Recording Service
@@ -86,7 +86,8 @@ ARG MSP_URL
 ARG MST_URL
 # Unifi Protect Device Service
 ARG DS_URL
-ARG AIFC_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/f3c8-uos-deb11-arm64-1.9.15-3316d322-b5da-4f44-84a3-e823dfef82be.deb"
+ARG AIFC_CNS_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/cba6-uos-deb11-arm64-1.10.5-de8752ff-02a0-4b28-9ddf-9158deb0a276.deb"
+ARG AIFC_CTR_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-controller/4041-uos-deb11-arm64-2.0.11-768932b3-d647-4e39-8a57-723534e5549f.deb"
 ARG DEB_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~{product}&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     --mount=type=bind,source=firmware/debs,target=/opt/debs \
@@ -97,8 +98,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && MSR_URL="${MSR_URL:-}" \
     && MSP_URL="${MSP_URL:-}" \
     && MST_URL="${MST_URL:-}" \
-    && AIFC_URL="${AIFC_URL:-}" \
-    && AIFC2_URL="${AIFC2_URL:-}" \
+    && AIFC_CNS_URL="${AIFC_CNS_URL:-}" \
+    && AIFC_CTR_URL="${AIFC_CTR_URL:-}" \
     && PROTECT_URL="${PROTECT_URL:-}" \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
     && systemctl enable systemd-timesyncd.service \
@@ -121,13 +122,13 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
             PROTECT_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/unifi-protect/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "PROTECT_URL=${PROTECT_URL}"; \
         fi \
-        && if [ -z "$AIFC_URL" ]; then \
-            AIFC_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-console/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
-            && echo "AIFC_URL=${AIFC_URL}"; \
+        && if [ -z "$AIFC_CNS_URL" ]; then \
+            AIFC_CNS_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-console/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "AIFC_CNS_URL=${AIFC_CNS_URL}"; \
         fi \
-        && if [ -z "$AIFC2_URL" ]; then \
-            AIFC2_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-controller/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
-            && echo "AIFC2_URL=${AIFC2_URL}"; \
+        && if [ -z "$AIFC_CTR_URL" ]; then \
+            AIFC_CTR_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-controller/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "AIFC_CTR_URL=${AIFC_CTR_URL}"; \
         fi \
         && if [ -z "$MS_URL" ]; then \
             MS_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ms/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
@@ -150,8 +151,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
             && echo "DS_URL=${DS_URL}"; \
         fi \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-protect.deb "$PROTECT_URL" \
-        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_URL" \
-        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-controller.deb "$AIFC2_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_CNS_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-controller.deb "$AIFC_CTR_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ms.deb "$MS_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msr.deb "$MSR_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msp.deb "$MSP_URL" \
@@ -165,16 +166,17 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     fi \
     # PROTECT_STABLE set \
     && if [ -n "$PROTECT_STABLE" ]; then \
-        wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_STABLE_URL" \
+        wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_CNS_STABLE_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-controller.deb "$AIFC_CTR_STABLE_URL" \
         && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/unifi-protect-deb/*.deb \
+            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/unifi-protect-deb/*.deb \
         && rm /opt/ai-feature-console.deb; \
     fi
 
 RUN \
     # Enable storage via ustorage instead of grpc ustate. \
     # This will most likely need to be updated with each firmware release. \
-    if ! sed -i '/return Qe()?s.push/{s//return Qe(),!0?s.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js; then \
+    if ! sed -i '/return at()?s.push/{s//return at(),!0?s.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js; then \
         echo 'ERROR: sed failed, check unifi-core/app/service.js contents!' && exit 1; \
     fi \
     && echo 'exit 0' > /usr/sbin/policy-rc.d \
@@ -196,9 +198,10 @@ STOPSIGNAL SIGINT
 CMD ["/lib/systemd/systemd"]
 
 LABEL PROTECT_STABLE=${PROTECT_STABLE}
-LABEL AIFC_STABLE_URL=${AIFC_STABLE_URL}
+LABEL AIFC_CNS_STABLE_URL=${AIFC_CNS_STABLE_URL}
+LABEL AIFC_CTR_STABLE_URL=${AIFC_CTR_STABLE_URL}
 LABEL PROTECT_URL=${PROTECT_URL}
-LABEL AIFC_URL=${AIFC_URL}
+LABEL AIFC_CNS_URL=${AIFC_CNS_URL}
 LABEL MS_URL=${MS_URL}
 LABEL MSR_URL=${MSR_URL}
 LABEL MSP_URL=${MSP_URL}

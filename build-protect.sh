@@ -16,11 +16,11 @@ fi
 if [[ -n "${PROTECT_URL+x}" ]]; then
     opts="$opts --build-arg PROTECT_URL=${PROTECT_URL}"
 fi
-if [[ -n "${AIFC_URL+x}" ]]; then
-    opts="$opts --build-arg AIFC_URL=${AIFC_URL}"
+if [[ -n "${AIFC_CNS_URL+x}" ]]; then
+    opts="$opts --build-arg AIFC_CNS_URL=${AIFC_CNS_URL}"
 fi
-if [[ -n "${AIFC2_URL+x}" ]]; then
-    opts="$opts --build-arg AIFC2_URL=${AIFC2_URL}"
+if [[ -n "${AIFC_CTR_URL+x}" ]]; then
+    opts="$opts --build-arg AIFC_CTR_URL=${AIFC_CTR_URL}"
 fi
 if [[ -n "${MS_URL+x}" ]]; then
     opts="$opts --build-arg MS_URL=${MS_URL}"

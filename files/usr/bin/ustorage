@@ -21,11 +21,13 @@ case "${1:-}" in
         "healthy": "good",
         "life_span": 100,
         "model": "UniFi Protect fake disk",
+        "node": "${device}",
         "poweronhrs": 1,
         "progress": null,
         "read_error": 0,
-        "reason": null,
-        "rpm": 5400,
+        "reason": [],
+        "risk_reasons": [],
+        "rpm": 7200,
         "sata": "SATA 3",
         "serial": "X0JNP396T",
         "size": ${sbytes},
@@ -68,7 +70,9 @@ EOT
             cat <<EOT
 {
     "hotspare": false,
-    "raid": "raid1"
+    "hotspare_enclosure": {},
+    "raid": "raid1",
+    "raid_enclosure": {},
 }
 EOT
         fi

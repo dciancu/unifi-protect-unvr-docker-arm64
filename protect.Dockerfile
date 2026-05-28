@@ -88,6 +88,7 @@ ARG MST_URL
 ARG DS_URL
 ARG AIFC_CNS_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/cba6-uos-deb11-arm64-1.10.5-de8752ff-02a0-4b28-9ddf-9158deb0a276.deb"
 ARG AIFC_CTR_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-controller/4041-uos-deb11-arm64-2.0.11-768932b3-d647-4e39-8a57-723534e5549f.deb"
+ARG DS_STABLE_URL="https://fw-download.ubnt.com/data/ds/6d12-uos-deb11-arm64-2.0.9-0a3d3908-7735-4fe5-a8e6-346fbb4a8cde.deb"
 ARG DEB_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~{product}&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     --mount=type=bind,source=firmware/debs,target=/opt/debs \
@@ -168,9 +169,11 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && if [ -n "$PROTECT_STABLE" ]; then \
         wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_CNS_STABLE_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-controller.deb "$AIFC_CTR_STABLE_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ds.deb "$DS_STABLE_URL" \
         && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/unifi-protect-deb/*.deb \
-        && rm /opt/ai-feature-console.deb; \
+            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ds.deb \
+            /opt/unifi-protect-deb/*.deb \
+        && rm /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ds.deb; \
     fi
 
 RUN \
@@ -206,6 +209,7 @@ CMD ["/lib/systemd/systemd"]
 LABEL PROTECT_STABLE=${PROTECT_STABLE}
 LABEL AIFC_CNS_STABLE_URL=${AIFC_CNS_STABLE_URL}
 LABEL AIFC_CTR_STABLE_URL=${AIFC_CTR_STABLE_URL}
+LABEL DS_STABLE_URL=${DS_STABLE_URL}
 LABEL PROTECT_URL=${PROTECT_URL}
 LABEL AIFC_CNS_URL=${AIFC_CNS_URL}
 LABEL MS_URL=${MS_URL}

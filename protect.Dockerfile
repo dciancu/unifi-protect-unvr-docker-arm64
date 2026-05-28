@@ -180,7 +180,7 @@ RUN \
             echo 'ERROR: sed for ustorage failed, check unifi-core/app/service.js contents!' && exit 1; \
     fi \
     # Mock StorageAPIClient of grpc ustate. \
-    sedSearch="import {StorageAPIClient}from'@ubnt/unifi-protobufs/unifi/firmware/storage/v2/api_grpc_pb.js';" \
+    && sedSearch="import {StorageAPIClient}from'@ubnt/unifi-protobufs/unifi/firmware/storage/v2/api_grpc_pb.js';" \
     && sedReplace="import {StorageAPIClient}from'./mockStorageAPIClient.js';" \
     && if ! sed -i ':a;N;$!ba;s|'"$sedSearch"'|'"$sedReplace"'|g;t;q1' /usr/share/unifi-core/app/service.js; then \
         echo 'ERROR: sed for StorageAPIClient mock failed, check unifi-core/app/service.js contents!' && exit 1; \

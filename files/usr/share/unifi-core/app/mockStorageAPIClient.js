@@ -5,14 +5,14 @@ import {exec} from 'child_process';
 function getSrvSpace() {
     return new Promise((resolve) => {
         exec('df -B1 /srv', (err, stdout) => {
-            // Fallback default values (100 GB) if the command fails or /srv is absent
+            // Fallback default values (100 GB) if the command fails
             const fallback = {
                 totalBytes: 100000000000, // 100 GB
                 usedBytes: 15300000000,   // ~15.3 GB
                 availBytes: 84700000000   // ~84.7 GB
             };
 
-            if (err || !stdout) {
+            if (err || ! stdout) {
                 resolve(fallback);
                 return;
             }
@@ -66,7 +66,7 @@ class MockGrpcStream extends EventEmitter {
     }
 
     cancel() {
-        if (!this.cancelled) {
+        if (! this.cancelled) {
             this.cancelled = true;
             this.emit('close');
             this.emit('cancelled');
@@ -78,13 +78,13 @@ class MockGrpcStream extends EventEmitter {
     }
 
     emitData(data) {
-        if (!this.cancelled) {
+        if (! this.cancelled) {
             this.emit('data', new MockGrpcResponse(data));
         }
     }
 
     emitError(err) {
-        if (!this.cancelled) {
+        if (! this.cancelled) {
             this.emit('error', err);
         }
     }

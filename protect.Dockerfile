@@ -87,7 +87,7 @@ ARG MST_URL
 # Unifi Protect Device Service
 ARG DS_URL
 ARG AIFC_CNS_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/cba6-uos-deb11-arm64-1.10.5-de8752ff-02a0-4b28-9ddf-9158deb0a276.deb"
-ARG AIFC_CTR_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-controller/c6b5-uos-deb11-arm64-2.0.14-fc26a9a9-3442-4e39-9a43-141f517ea123.deb"
+ARG AIFC_CTR_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-controller/9582-uos-deb11-arm64-2.0.15-ce320eb9-edb5-472b-941e-86d586badfa6.deb"
 ARG DS_STABLE_URL="https://fw-download.ubnt.com/data/ds/6c38-uos-deb11-arm64-2.0.13-afa1d10f-0caa-49f1-b48c-a9b3695d59d1.deb"
 ARG DEB_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~{product}&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
@@ -177,13 +177,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     fi
 
 RUN \
-    # Enable storage via ustorage instead of grpc ustate. \
-    # This will most likely need to be updated with each firmware release. \
-    if ! sed -i '/return at()?s.push/{s//return at(),!0?s.push/;h};${x;/./{x;q0};x;q1}' /usr/share/unifi-core/app/service.js; then \
-            echo 'ERROR: sed for ustorage failed, check unifi-core/app/service.js contents!' && exit 1; \
-    fi \
     # Mock StorageAPIClient of grpc ustate. \
-    && sedSearch="import {StorageAPIClient}from'@ubnt/unifi-protobufs/unifi/firmware/storage/v2/api_grpc_pb.js';" \
+    sedSearch="import {StorageAPIClient}from'@ubnt/unifi-protobufs/unifi/firmware/storage/v2/api_grpc_pb.js';" \
     && sedReplace="import {StorageAPIClient}from'./mockStorageAPIClient.js';" \
     && if ! sed -i ':a;N;$!ba;s|'"$sedSearch"'|'"$sedReplace"'|g;t;q1' /usr/share/unifi-core/app/service.js; then \
         echo 'ERROR: sed for StorageAPIClient mock failed, check unifi-core/app/service.js contents!' && exit 1; \

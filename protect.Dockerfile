@@ -87,7 +87,7 @@ ARG MST_URL
 # Unifi Protect Device Service
 ARG DS_URL
 ARG AIFC_CNS_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/cba6-uos-deb11-arm64-1.10.5-de8752ff-02a0-4b28-9ddf-9158deb0a276.deb"
-ARG AIFC_CTR_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-controller/9582-uos-deb11-arm64-2.0.15-ce320eb9-edb5-472b-941e-86d586badfa6.deb"
+ARG AIFC_CTR_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-controller/7af8-uos-deb11-arm64-2.0.17-5137b74f-65d2-4725-b3ef-ce2a10625e3a.deb"
 ARG DS_STABLE_URL="https://fw-download.ubnt.com/data/ds/6c38-uos-deb11-arm64-2.0.13-afa1d10f-0caa-49f1-b48c-a9b3695d59d1.deb"
 ARG DEB_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~{product}&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \

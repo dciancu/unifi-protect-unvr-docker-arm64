@@ -162,8 +162,12 @@ ARG MSR_URL
 ARG MSP_URL
 # Media Server Trascoding Service
 ARG MST_URL
+# Media Server Ffmpeg
+ARG MSF_URL
 # Unifi Protect Device Service
 ARG DS_URL
+# UniFi Protect evidence verification CLI
+ARG PROTECT_VERIFY_URL
 ARG AIFC_CNS_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/cba6-uos-deb11-arm64-1.10.5-de8752ff-02a0-4b28-9ddf-9158deb0a276.deb"
 ARG AIFC_CTR_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-controller/7af8-uos-deb11-arm64-2.0.17-5137b74f-65d2-4725-b3ef-ce2a10625e3a.deb"
 ARG DS_STABLE_URL="https://fw-download.ubnt.com/data/ds/6c38-uos-deb11-arm64-2.0.13-afa1d10f-0caa-49f1-b48c-a9b3695d59d1.deb"
@@ -175,10 +179,12 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && MSR_URL="${MSR_URL:-}" \
     && MSP_URL="${MSP_URL:-}" \
     && MST_URL="${MST_URL:-}" \
+    && MSF_URL="${MSF_URL:-}" \
     && AIFC_CNS_URL="${AIFC_CNS_URL:-}" \
     && AIFC_CTR_URL="${AIFC_CTR_URL:-}" \
     && PROTECT_URL="${PROTECT_URL:-}" \
     && PROTECT_STABLE="${PROTECT_STABLE:-}" \
+    && PROTECT_VERIFY_URL="${PROTECT_VERIFY_URL:-}" \
     && systemctl enable systemd-timesyncd.service \
     && systemctl enable systemd-time-wait-sync.service \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
@@ -222,9 +228,17 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
             MST_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/mst/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MST_URL=${MST_URL}"; \
         fi \
+        && if [ -z "$MSF_URL" ]; then \
+            MSF_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/msf/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "MSF_URL=${MSF_URL}"; \
+        fi \
         && if [ -z "$DS_URL" ]; then \
             DS_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ds/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "DS_URL=${DS_URL}"; \
+        fi \
+        && if [ -z "$PROTECT_VERIFY_URL" ]; then \
+            PROTECT_VERIFY_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/protect-verify/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+            && echo "PROTECT_VERIFY_URL=${PROTECT_VERIFY_URL}"; \
         fi \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-protect.deb "$PROTECT_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_CNS_URL" \
@@ -233,10 +247,12 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msr.deb "$MSR_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msp.deb "$MSP_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/mst.deb "$MST_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msf.deb "$MSF_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ds.deb "$DS_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/protect-verify.deb "$PROTECT_VERIFY_URL" \
         && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
             install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ms.deb /opt/msr.deb \
-                /opt/msp.deb /opt/mst.deb /opt/ds.deb /opt/unifi-protect.deb \
+                /opt/msp.deb /opt/mst.deb /opt/msf.deb /opt/ds.deb /opt/protect-verify.deb /opt/unifi-protect.deb \
         && rm /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ms.deb /opt/msr.deb /opt/msp.deb \
             /opt/mst.deb /opt/ds.deb /opt/unifi-protect.deb; \
     fi \
@@ -283,10 +299,12 @@ LABEL AIFC_CNS_STABLE_URL=${AIFC_CNS_STABLE_URL}
 LABEL AIFC_CTR_STABLE_URL=${AIFC_CTR_STABLE_URL}
 LABEL DS_STABLE_URL=${DS_STABLE_URL}
 LABEL PROTECT_URL=${PROTECT_URL}
+LABEL PROTECT_VERIFY_URL=${PROTECT_VERIFY_URL}
 LABEL AIFC_CNS_URL=${AIFC_CNS_URL}
 LABEL AIFC_CTR_URL=${AIFC_CTR_URL}
 LABEL MS_URL=${MS_URL}
 LABEL MSR_URL=${MSR_URL}
 LABEL MSP_URL=${MSP_URL}
 LABEL MST_URL=${MST_URL}
+LABEL MSF_URL=${MSF_URL}
 LABEL DS_URL=${DS_URL}

@@ -60,6 +60,8 @@ docker build -t dciancu/unifi-protect-unvr-docker-arm64:stable --build-arg PROTE
 Build arguments (`Dockerfile` usage):
 - Set `PROTECT_STABLE` when building Protect to build `stable` image - uses Protect version packaged in UNVR firmware.  
   If this is not set, the `edge` image is built by default - uses latest Protect version.
+- Set `UPDATE_PROTECT=0` to skip updating Protect during the image build. Default is `1`.
+- Set `UPDATE_PROTECT_RC` to choose the maximum Protect update release channel. Default is `release`; supported values are `release`, `release-candidate`, `beta`, `alpha`, `internal`, and `qa` (these are values from uos. UI only exposes `release`, `release-candidate`, and `beta` <- early access).
 
 `build.sh` usage:
 ```
@@ -74,6 +76,8 @@ Environment variables (`build.sh` usage):
 - Set `BUILD_TAG_VERSION` when building Protect to tag images with Protect version.
 - Set `BUILD_PRUNE` when building Protect to delete **ALL** images and prune build cache.
 - Set `BUILD_TEST` when building Protect to build test images.
+- Set `UPDATE_PROTECT=0` when building Protect to skip updating Protect during the image build. Default is `1`.
+- Set `UPDATE_PROTECT_RC` when building Protect to choose the maximum Protect update release channel. Default is `release`; supported values are `release`, `release-candidate`, `beta`, `alpha`, `internal`, and `qa` (these are values from uos. UI only exposes `release`, `release-candidate`, and `beta` <- early access).
 
 General arguments (`Dockerfile` usage) / environment variables (`build.sh` usage):
 - Set `PROTECT_URL` when building Protect to download `unifi-protect` deb package from a custom link (`edge` image).

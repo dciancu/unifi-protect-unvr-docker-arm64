@@ -148,6 +148,10 @@ COPY --from=firmware /opt/firmware-build/debs /opt/debs
 COPY --from=firmware /opt/firmware-build/unifi-protect-deb /opt/unifi-protect-deb
 
 ARG PROTECT_STABLE
+# Whether to update protect to latest
+ARG UPDATE_PROTECT=1
+# Maximum Release Channel: release, release-candidate, beta, alpha, internal, qa
+ARG UPDATE_PROTECT_RC=release
 # UniFi Protect
 ARG PROTECT_URL
 # AI features on console
@@ -266,6 +270,12 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
             /opt/unifi-protect-deb/*.deb \
         && rm /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ds.deb; \
     fi \
+    && if [ "${UPDATE_PROTECT}" = "1" ]; then \
+        printf 'pre-installed version: %s\n' "$(cat /usr/share/unifi-protect/app/version)" \
+        && cd /usr/share/unifi-core/app \
+        && /usr/bin/uos runnable install --progress --max-release-channel "${UPDATE_PROTECT_RC}" unifi-protect \
+        && printf 'after update: %s\n' "$(cat /usr/share/unifi-protect/app/version)"; \
+    fi \
     && rm -r /opt/debs /opt/unifi-protect-deb
 
 RUN \
@@ -295,6 +305,8 @@ CMD ["/lib/systemd/systemd"]
 
 LABEL project_version='7.1.1'
 LABEL PROTECT_STABLE=${PROTECT_STABLE}
+LABEL UPDATE_PROTECT=${UPDATE_PROTECT}
+LABEL UPDATE_PROTECT_RC=${UPDATE_PROTECT_RC}
 LABEL AIFC_CNS_STABLE_URL=${AIFC_CNS_STABLE_URL}
 LABEL AIFC_CTR_STABLE_URL=${AIFC_CTR_STABLE_URL}
 LABEL DS_STABLE_URL=${DS_STABLE_URL}

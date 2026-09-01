@@ -70,6 +70,10 @@ COPY firmware/version /usr/lib/version
 COPY files/etc /etc/
 
 ARG PROTECT_STABLE
+# Whether to update protect to latest
+ARG UPDATE_PROTECT=1
+# Maximum Release Channel: release, release-candidate, beta, alpha, internal, qa
+ARG UPDATE_PROTECT_RC=release
 # UniFi Protect
 ARG PROTECT_URL
 # AI features on console
@@ -190,13 +194,13 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
             install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ds.deb \
             /opt/unifi-protect-deb/*.deb \
         && rm /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ds.deb; \
+    fi \
+    && if [ "${UPDATE_PROTECT}" = "1" ]; then \
+        printf 'pre-installed version: %s\n' "$(cat /usr/share/unifi-protect/app/version)" \
+        && cd /usr/share/unifi-core/app \
+        && /usr/bin/uos runnable install --progress --max-release-channel "${UPDATE_PROTECT_RC}" unifi-protect \
+        && printf 'after update: %s\n' "$(cat /usr/share/unifi-protect/app/version)"; \
     fi
-
-RUN \
-    cat /usr/share/unifi-protect/app/version \
-    && cd /usr/share/unifi-core/app \
-    && /usr/bin/uos runnable install --progress --max-release-channel beta unifi-protect \
-    && cat /usr/share/unifi-protect/app/version
 
 RUN \
     # Mock StorageAPIClient of grpc ustate. \

@@ -7,7 +7,8 @@ cd "$SCRIPT_DIR"
 
 image_name="${DOCKER_IMAGE:-dciancu/unifi-protect-unvr-docker-arm64}"
 
-opts="--label project_version=$(tr -d '\n ' < VERSION.txt) --label project_git_commit=$(git describe | tr -d '\n ')"
+GIT_COMMIT_DESCRIBE=$(git describe --always 2>/dev/null || git rev-parse --short HEAD)
+opts="--label project_version=$(tr -d '\n ' < VERSION.txt) --label project_git_commit=${GIT_COMMIT_DESCRIBE}"
 firmware_version="$(tr -d '\n ' < firmware/version)"
 opts="$opts --label FW_VERSION=${firmware_version}"
 if [[ -n "${DOCKER_NO_CACHE+x}" ]]; then

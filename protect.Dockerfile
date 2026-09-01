@@ -193,6 +193,12 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     fi
 
 RUN \
+    cat /usr/share/unifi-protect/app/version \
+    && cd /usr/share/unifi-core/app \
+    && /usr/bin/uos runnable install --progress --max-release-channel beta unifi-protect \
+    && cat /usr/share/unifi-protect/app/version
+
+RUN \
     # Mock StorageAPIClient of grpc ustate. \
     sedSearch="import {StorageAPIClient}from'@ubnt/unifi-protobufs/unifi/firmware/storage/v2/api_grpc_pb.js';" \
     && sedReplace="import {StorageAPIClient}from'./mockStorageAPIClient.js';" \

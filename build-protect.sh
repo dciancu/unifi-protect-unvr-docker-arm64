@@ -38,6 +38,12 @@ fi
 if [[ -n "${DS_URL+x}" ]]; then
     opts="$opts --build-arg DS_URL=${DS_URL}"
 fi
+if [[ -n "${UPDATE_PROTECT+x}" ]]; then
+    opts="$opts --build-arg UPDATE_PROTECT=${UPDATE_PROTECT}"
+fi
+if [[ -n "${UPDATE_PROTECT_RC+x}" ]]; then
+    opts="$opts --build-arg UPDATE_PROTECT_RC=${UPDATE_PROTECT_RC}"
+fi
 
 if [[ -n "${BUILD_TEST+x}" ]]; then
     if [[ -n "${BUILD_PRUNE+x}" ]]; then

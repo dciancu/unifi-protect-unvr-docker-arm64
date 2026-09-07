@@ -178,17 +178,6 @@ ARG DS_STABLE_URL="https://fw-download.ubnt.com/data/ds/6c38-uos-deb11-arm64-2.0
 ARG DEB_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~{product}&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
-    && DS_URL="${DS_URL:-}" \
-    && MS_URL="${MS_URL:-}" \
-    && MSR_URL="${MSR_URL:-}" \
-    && MSP_URL="${MSP_URL:-}" \
-    && MST_URL="${MST_URL:-}" \
-    && MSF_URL="${MSF_URL:-}" \
-    && AIFC_CNS_URL="${AIFC_CNS_URL:-}" \
-    && AIFC_CTR_URL="${AIFC_CTR_URL:-}" \
-    && PROTECT_URL="${PROTECT_URL:-}" \
-    && PROTECT_STABLE="${PROTECT_STABLE:-}" \
-    && PROTECT_VERIFY_URL="${PROTECT_VERIFY_URL:-}" \
     && systemctl enable systemd-timesyncd.service \
     && systemctl enable systemd-time-wait-sync.service \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
@@ -203,44 +192,44 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     # install /usr/bin/ms (ms package) shared libs not set in package deps \
     && apt-get --no-install-recommends -y install libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libglib2.0-0 \
     # PROTECT_STABLE not set \
-    && if [ -z "$PROTECT_STABLE" ]; then \
-        if [ -z "$PROTECT_URL" ]; then \
+    && if [ -z "${PROTECT_STABLE:-}" ]; then \
+        if [ -z "${PROTECT_URL:-}" ]; then \
             PROTECT_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/unifi-protect/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "PROTECT_URL=${PROTECT_URL}"; \
         fi \
-        && if [ -z "$AIFC_CNS_URL" ]; then \
+        && if [ -z "${AIFC_CNS_URL:-}" ]; then \
             AIFC_CNS_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-console/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "AIFC_CNS_URL=${AIFC_CNS_URL}"; \
         fi \
-        && if [ -z "$AIFC_CTR_URL" ]; then \
+        && if [ -z "${AIFC_CTR_URL:-}" ]; then \
             AIFC_CTR_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ai-feature-controller/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "AIFC_CTR_URL=${AIFC_CTR_URL}"; \
         fi \
-        && if [ -z "$MS_URL" ]; then \
+        && if [ -z "${MS_URL:-}" ]; then \
             MS_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ms/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MS_URL=${MS_URL}"; \
         fi \
-        && if [ -z "$MSR_URL" ]; then \
+        && if [ -z "${MSR_URL:-}" ]; then \
             MSR_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/msr/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MSR_URL=${MSR_URL}"; \
         fi \
-        && if [ -z "$MSP_URL" ]; then \
+        && if [ -z "${MSP_URL:-}" ]; then \
             MSP_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/msp/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MSP_URL=${MSP_URL}"; \
         fi \
-        && if [ -z "$MST_URL" ]; then \
+        && if [ -z "${MST_URL:-}" ]; then \
             MST_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/mst/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MST_URL=${MST_URL}"; \
         fi \
-        && if [ -z "$MSF_URL" ]; then \
+        && if [ -z "${MSF_URL:-}" ]; then \
             MSF_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/msf/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "MSF_URL=${MSF_URL}"; \
         fi \
-        && if [ -z "$DS_URL" ]; then \
+        && if [ -z "${DS_URL:-}" ]; then \
             DS_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/ds/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "DS_URL=${DS_URL}"; \
         fi \
-        && if [ -z "$PROTECT_VERIFY_URL" ]; then \
+        && if [ -z "${PROTECT_VERIFY_URL:-}" ]; then \
             PROTECT_VERIFY_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/protect-verify/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "PROTECT_VERIFY_URL=${PROTECT_VERIFY_URL}"; \
         fi \
@@ -255,20 +244,17 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ds.deb "$DS_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/protect-verify.deb "$PROTECT_VERIFY_URL" \
         && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ms.deb /opt/msr.deb \
-                /opt/msp.deb /opt/mst.deb /opt/msf.deb /opt/ds.deb /opt/protect-verify.deb /opt/unifi-protect.deb \
-        && rm /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ms.deb /opt/msr.deb /opt/msp.deb \
-            /opt/mst.deb /opt/ds.deb /opt/protect-verify.deb /opt/unifi-protect.deb; \
+            install /opt/debs/*.deb /opt/*.deb \
+        && rm /opt/*.deb; \
     fi \
     # PROTECT_STABLE set \
-    && if [ -n "$PROTECT_STABLE" ]; then \
+    && if [ -n "${PROTECT_STABLE:-}" ]; then \
         wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_CNS_STABLE_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-controller.deb "$AIFC_CTR_STABLE_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ds.deb "$DS_STABLE_URL" \
         && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
-            install /opt/debs/*.deb /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ds.deb \
-            /opt/unifi-protect-deb/*.deb \
-        && rm /opt/ai-feature-console.deb /opt/ai-feature-controller.deb /opt/ds.deb; \
+            install /opt/debs/*.deb /opt/*.deb /opt/unifi-protect-deb/*.deb \
+        && rm /opt/*.deb; \
     fi \
     && rm -r /opt/debs /opt/unifi-protect-deb
 

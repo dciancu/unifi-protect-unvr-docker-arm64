@@ -7,42 +7,20 @@ cd "$SCRIPT_DIR"
 
 image_name="${DOCKER_IMAGE:-dciancu/unifi-protect-unvr-docker-arm64}"
 
-opts="--label project_version=$(tr -d '\n ' < VERSION.txt) --label project_git_commit=$(git describe | tr -d '\n ')"
 firmware_version="$(tr -d '\n ' < firmware/version)"
-opts="$opts --label FW_VERSION=${firmware_version}"
+opts=(
+    --label project_version="$(tr -d '\n ' < VERSION.txt)"
+    --label project_git_commit="$(git describe | tr -d '\n ')"
+    --label FW_VERSION="${firmware_version}"
+)
 if [[ -n "${DOCKER_NO_CACHE+x}" ]]; then
-    opts="$opts --no-cache"
+    opts+=(--no-cache)
 fi
-if [[ -n "${PROTECT_URL+x}" ]]; then
-    opts="$opts --build-arg PROTECT_URL=${PROTECT_URL}"
-fi
-if [[ -n "${AIFC_CNS_URL+x}" ]]; then
-    opts="$opts --build-arg AIFC_CNS_URL=${AIFC_CNS_URL}"
-fi
-if [[ -n "${AIFC_CTR_URL+x}" ]]; then
-    opts="$opts --build-arg AIFC_CTR_URL=${AIFC_CTR_URL}"
-fi
-if [[ -n "${MS_URL+x}" ]]; then
-    opts="$opts --build-arg MS_URL=${MS_URL}"
-fi
-if [[ -n "${MSR_URL+x}" ]]; then
-    opts="$opts --build-arg MSR_URL=${MSR_URL}"
-fi
-if [[ -n "${MSP_URL+x}" ]]; then
-    opts="$opts --build-arg MSP_URL=${MSP_URL}"
-fi
-if [[ -n "${MST_URL+x}" ]]; then
-    opts="$opts --build-arg MST_URL=${MST_URL}"
-fi
-if [[ -n "${MSF_URL+x}" ]]; then
-    opts="$opts --build-arg MSF_URL=${MSF_URL}"
-fi
-if [[ -n "${DS_URL+x}" ]]; then
-    opts="$opts --build-arg DS_URL=${DS_URL}"
-fi
-if [[ -n "${PROTECT_VERIFY_URL+x}" ]]; then
-    opts="$opts --build-arg PROTECT_VERIFY_URL=${PROTECT_VERIFY_URL}"
-fi
+for var in $(compgen -v); do
+    if [[ "$var" == *_URL ]]; then
+        opts+=(--build-arg "${var}=${!var}")
+    fi
+done
 
 if [[ -n "${BUILD_TEST+x}" ]]; then
     if [[ -n "${BUILD_PRUNE+x}" ]]; then
@@ -52,11 +30,11 @@ if [[ -n "${BUILD_TEST+x}" ]]; then
     fi
 
     if [[ -n "${BUILD_EDGE+x}" ]]; then
-        docker build $opts -f protect.Dockerfile -t "${image_name}:test-edge" .
+        docker build "${opts[@]}" -f protect.Dockerfile -t "${image_name}:test-edge" .
     fi
 
     if [[ -n "${BUILD_STABLE+x}" ]] || [[ -z "${BUILD_EDGE+x}" ]]; then
-        docker build $opts -f protect.Dockerfile --build-arg PROTECT_STABLE=1 -t "${image_name}:test-stable" --pull .
+        docker build "${opts[@]}" -f protect.Dockerfile --build-arg PROTECT_STABLE=1 -t "${image_name}:test-stable" --pull .
     fi
 else
     if [[ -n "${BUILD_PRUNE+x}" ]]; then
@@ -66,7 +44,7 @@ else
     fi
 
     if [[ -n "${BUILD_EDGE+x}" ]]; then
-        docker build $opts -f protect.Dockerfile -t "${image_name}:edge" .
+        docker build "${opts[@]}" -f protect.Dockerfile -t "${image_name}:edge" .
         if [[ -n "${BUILD_TAG_VERSION+x}" ]]; then
             version="$(docker run --rm "${image_name}:edge" dpkg -s unifi-protect | grep '^Version:' | cut -d ' ' -f 2 | tr -d '\n')"
             docker tag "${image_name}:edge" "${image_name}:v${version}"
@@ -76,7 +54,7 @@ else
     fi
 
     if [[ -n "${BUILD_STABLE+x}" ]] || [[ -z "${BUILD_EDGE+x}" ]]; then
-        docker build $opts -f protect.Dockerfile --build-arg PROTECT_STABLE=1 -t "${image_name}:stable" --pull .
+        docker build "${opts[@]}" -f protect.Dockerfile --build-arg PROTECT_STABLE=1 -t "${image_name}:stable" --pull .
         if [[ -n "${BUILD_TAG_VERSION+x}" ]]; then
             docker tag "${image_name}:stable" "${image_name}:${firmware_version}"
             version="$(docker run --rm "${image_name}:stable" dpkg -s unifi-protect | grep '^Version:' | cut -d ' ' -f 2 | tr -d '\n')"

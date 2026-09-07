@@ -5,12 +5,12 @@ SHELL ["/usr/bin/env", "bash", "-c"]
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
-    && apt-get update \
-    && apt-get install -y apt-transport-https ca-certificates \
     && sed -i -e 's|^# deb http://snapshot|deb http://snapshot|' \
         -e '\|^deb http://deb.debian.org|d' /etc/apt/sources.list \
     && echo -e '# Temporary deb snapshot fix\nAcquire::Check-Valid-Until "false";' \
         | tee /etc/apt/apt.conf.d/99no-check-valid-until \
+    && apt-get update \
+    && apt-get install -y apt-transport-https ca-certificates \
     && sed -i 's/http:/https:/g' /etc/apt/sources.list \
     && apt-get update \
     && apt-get -y upgrade \

@@ -1,1 +1,1 @@
-https://fw-download.ubnt.com/data/unifi-nvr/b4cf-UNVR-5.1.31-fe80a37f-26ac-42bd-bf0b-58e46b54f628.bin
+https://fw-download.ubnt.com/data/unifi-nvr/976a-UNVR-5.1.33-84c520f3-fb97-41e0-be2b-b0f89c46c7b8.bin

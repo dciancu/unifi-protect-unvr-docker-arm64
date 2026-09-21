@@ -3,12 +3,10 @@ FROM arm64v8/debian:11 AS protect
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
 
+COPY files/etc/apt /etc/apt/
+
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
-    && sed -i -e 's|^# deb http://snapshot|deb http://snapshot|' \
-        -e '\|^deb http://deb.debian.org|d' /etc/apt/sources.list \
-    && echo -e '# Temporary deb snapshot fix\nAcquire::Check-Valid-Until "false";' \
-        | tee /etc/apt/apt.conf.d/99no-check-valid-until \
     && apt-get update \
     && apt-get install -y apt-transport-https ca-certificates \
     && sed -i 's/http:/https:/g' /etc/apt/sources.list \
@@ -71,7 +69,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get --no-install-recommends -y install postgresql-14
 
 COPY firmware/version /usr/lib/version
-COPY files/etc /etc/
+COPY files/etc/systemd /etc/systemd/
 
 ARG PROTECT_STABLE
 # UniFi Protect

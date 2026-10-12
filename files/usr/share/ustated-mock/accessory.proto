@@ -1,0 +1,17 @@
+// Subset of unifi.firmware.accessory.v1 used by Protect 7.3+ (ustate.peripheralState).
+// Field numbers taken from the generated code in unifi-protect/app/service.js.
+syntax = "proto3";
+
+package unifi.firmware.accessory.v1;
+
+service AccessoryAPI {
+  rpc PeripheralState(PeripheralStateRequest) returns (stream PeripheralStateResponse);
+}
+
+message PeripheralStateRequest {
+  bytes mask = 1; // google.protobuf.FieldMask, ignored
+}
+
+message PeripheralStateResponse {
+  bytes peripheral = 1; // Peripheral; left unset = no expansion units attached
+}

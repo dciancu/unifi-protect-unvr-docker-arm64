@@ -1,0 +1,105 @@
+// Subset of unifi.firmware.storage.v2 used by Protect 7.3+ (ustate.spaceState).
+// Field numbers taken from the generated code in unifi-protect/app/service.js.
+syntax = "proto3";
+
+package unifi.firmware.storage.v2;
+
+service StorageAPI {
+  rpc SpaceState(SpaceStateRequest) returns (stream SpaceStateResponse);
+}
+
+message SpaceStateRequest {
+  bytes mask = 1; // google.protobuf.FieldMask, ignored
+}
+
+message SpaceStateResponse {
+  repeated Space space = 1;
+}
+
+enum SpaceState {
+  SPACE_STATE_UNSPECIFIED = 0;
+  SPACE_STATE_REMOVED = 1;
+  SPACE_STATE_HEALTHY = 2;
+  SPACE_STATE_AT_RISK = 3;
+  SPACE_STATE_READ_ONLY = 4;
+  SPACE_STATE_FAILED = 5;
+}
+
+enum SpaceType {
+  SPACE_TYPE_UNSPECIFIED = 0;
+  SPACE_TYPE_DATA = 1;
+  SPACE_TYPE_INTERNAL_STORAGE = 2;
+  SPACE_TYPE_SWAP = 3;
+  SPACE_TYPE_ROOT = 4;
+}
+
+message Space {
+  string device = 1;
+  SpaceState state = 2;
+  SpaceType type = 3;
+  SpaceInfo info = 4;
+}
+
+message SpaceInfo {
+  FilesystemInfo filesystem = 1;
+  repeated Raid raid = 2;
+}
+
+enum FilesystemType {
+  FILESYSTEM_TYPE_UNSPECIFIED = 0;
+  FILESYSTEM_TYPE_EXT4 = 1;
+}
+
+enum FilesystemMountStatus {
+  FILESYSTEM_MOUNT_STATUS_UNSPECIFIED = 0;
+  FILESYSTEM_MOUNT_STATUS_MOUNTED = 1;
+}
+
+message FilesystemInfo {
+  string uuid = 1;
+  FilesystemType type = 2;
+  string mount_point = 3;
+  FilesystemMountStatus mount_status = 4;
+  uint64 total_bytes = 5;
+  uint64 used_bytes = 6;
+  uint64 system_reserved_bytes = 7;
+}
+
+enum RaidState {
+  RAID_STATE_UNSPECIFIED = 0;
+  RAID_STATE_HEALTHY = 1;
+}
+
+enum RaidSyncAction {
+  RAID_SYNC_ACTION_UNSPECIFIED = 0;
+  RAID_SYNC_ACTION_NONE = 1;
+}
+
+enum RaidLevel {
+  RAID_LEVEL_UNSPECIFIED = 0;
+  RAID_LEVEL_0 = 1;
+  RAID_LEVEL_1 = 2;
+}
+
+message Raid {
+  string device = 1;
+  RaidState state = 2;
+  RaidInfo info = 3;
+  RaidMemberInfo members = 4;
+}
+
+message RaidInfo {
+  string uuid = 1;
+  RaidSyncAction sync_action = 2;
+  RaidLevel current_level = 3;
+  RaidLevel configured_level = 4;
+  uint32 expected_parity_count = 5;
+  uint64 size_kilobytes = 6;
+}
+
+message RaidMemberInfo {
+  uint64 size = 1;
+  repeated string names = 2;
+  uint32 expected_count = 3;
+  uint32 max_configured_count = 4;
+}

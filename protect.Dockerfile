@@ -1,15 +1,13 @@
-FROM arm64v8/debian:11 AS protect
+FROM arm64v8/debian:13 AS protect
 
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
-
-COPY files/etc/apt /etc/apt/
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
     && apt-get update \
     && apt-get install -y apt-transport-https ca-certificates \
-    && sed -i 's/http:/https:/g' /etc/apt/sources.list \
+    && sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources \
     && apt-get update \
     && apt-get -y upgrade \
     && apt-get -y dist-upgrade \
@@ -43,6 +41,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         sysstat \
         net-tools \
         jq \
+        # chattr, used by fix_apt_ubiquiti_sources.sh, is no longer installed by default on debian 13 \
+        e2fsprogs \
     && find /etc/systemd/system \
         /lib/systemd/system \
         -path '*.wants/*' \
@@ -92,10 +92,18 @@ ARG MSF_URL
 ARG DS_URL
 # UniFi Protect evidence verification CLI
 ARG PROTECT_VERIFY_URL
-ARG AIFC_CNS_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/cba6-uos-deb11-arm64-1.10.5-de8752ff-02a0-4b28-9ddf-9158deb0a276.deb"
-ARG AIFC_CTR_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-controller/7af8-uos-deb11-arm64-2.0.17-5137b74f-65d2-4725-b3ef-ce2a10625e3a.deb"
-ARG DS_STABLE_URL="https://fw-download.ubnt.com/data/ds/6c38-uos-deb11-arm64-2.0.13-afa1d10f-0caa-49f1-b48c-a9b3695d59d1.deb"
-ARG DEB_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~{product}&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb11-arm64"
+ARG AIFC_CNS_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-console/a678-uos-deb13-arm64-1.11.0-636c4bf3-485f-4231-a1ee-902e5024b4b1.deb"
+ARG AIFC_CTR_STABLE_URL="https://fw-download.ubnt.com/data/ai-feature-controller/6c45-uos-deb13-arm64-2.0.17-725ca246-0120-46c3-a5fc-037e3dd6b698.deb"
+ARG DS_STABLE_URL="https://fw-download.ubnt.com/data/ds/5ec4-uos-deb13-arm64-7.2.14-f090486c-0751-4ca2-8ddb-66f6d78a278f.deb"
+ARG MSF_STABLE_URL="https://fw-download.ubnt.com/data/msf/0332-uos-deb13-arm64-0.0.7-680bcb93-21c0-4b72-8592-3f5f3166189c.deb"
+ARG PROTECT_VERIFY_STABLE_URL="https://fw-download.ubnt.com/data/protect-verify/1f90-uos-deb13-arm64-0.9.1-80cbd13f-7e94-481f-adb0-07ad8a1f38c8.deb"
+# the trixie apt repo only carries ms/msr/msp/mst 5.1.290, Protect 7.2.105 needs >= 5.1.309
+ARG MS_STABLE_URL="https://fw-download.ubnt.com/data/ms/3cea-uos-deb13-arm64-5.1.309-959cf5b1-3d58-4cf4-a4f3-257f29f655c8.deb"
+ARG MSR_STABLE_URL="https://fw-download.ubnt.com/data/msr/24fe-uos-deb13-arm64-5.1.309-aaba59d2-719d-48ba-94ef-284421d8221c.deb"
+ARG MSP_STABLE_URL="https://fw-download.ubnt.com/data/msp/a41c-uos-deb13-arm64-5.1.309-75711aa0-f3ca-4cc8-9c29-a2fe91cee284.deb"
+ARG MST_STABLE_URL="https://fw-download.ubnt.com/data/mst/8435-uos-deb13-arm64-5.1.309-bb0c2a78-3b26-43be-a441-a95a0716bf98.deb"
+ARG RCLONE_STABLE_URL="https://fw-download.ubnt.com/data/unifi-rclone/9d16-uos-deb13-arm64-1.74.4-9790-8567b01b-5d50-4723-a54b-eb59fae8f931.deb"
+ARG DEB_UPDATE_URL="https://fw-update.ubnt.com/api/firmware-latest?filter=eq~~product~~{product}&filter=eq~~channel~~release&filter=eq~~platform~~uos-deb13-arm64"
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     --mount=type=bind,source=firmware/debs,target=/opt/debs \
     --mount=type=bind,source=firmware/unifi-protect-deb,target=/opt/unifi-protect-deb \
@@ -103,7 +111,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && systemctl enable systemd-timesyncd.service \
     && systemctl enable systemd-time-wait-sync.service \
     && apt-get --no-install-recommends -y install /opt/debs/ubnt-archive-keyring_*_arm64.deb \
-    && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` main release" > /etc/apt/sources.list.d/ubiquiti.list \
+    && echo "deb https://apt.artifacts.ui.com `lsb_release -cs` release" > /etc/apt/sources.list.d/ubiquiti.list \
     && apt-get update \
     && mv /bin/systemctl /bin/systemctl.tmp \
     && echo -e '#!/bin/bash\necho 0' > /bin/systemctl \
@@ -113,7 +121,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && systemctl enable uos-discovery-client.service \
     # install /usr/bin/ms (ms package) shared libs not set in package deps \
     && apt-get --no-install-recommends -y install libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 \
-        libgstreamer-plugins-bad1.0-0 libglib2.0-0 \
+        libgstreamer-plugins-bad1.0-0 libglib2.0-0t64 \
     # PROTECT_STABLE not set \
     && if [ -z "${PROTECT_STABLE:-}" ]; then \
         if [ -z "${PROTECT_URL:-}" ]; then \
@@ -156,6 +164,16 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
             PROTECT_VERIFY_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/protect-verify/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
             && echo "PROTECT_VERIFY_URL=${PROTECT_VERIFY_URL}"; \
         fi \
+        && RCLONE_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/unifi-rclone/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+        && echo "RCLONE_URL=${RCLONE_URL}" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-rclone.deb "$RCLONE_URL" \
+        # unifi-user-assets (needed by Protect >= 7.3) and its unifi-face-shared-lib dependency are not in the trixie apt repo either \
+        && USER_ASSETS_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/unifi-user-assets/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+        && echo "USER_ASSETS_URL=${USER_ASSETS_URL}" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-user-assets.deb "$USER_ASSETS_URL" \
+        && FACE_LIB_URL="$(wget -q -O - "$(printf "$DEB_UPDATE_URL" | sed 's/{product}/unifi-face-shared-lib/')" | jq -r '._embedded.firmware[0]._links.data.href')" \
+        && echo "FACE_LIB_URL=${FACE_LIB_URL}" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-face-shared-lib.deb "$FACE_LIB_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-protect.deb "$PROTECT_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_CNS_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-controller.deb "$AIFC_CTR_URL" \
@@ -175,6 +193,13 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-console.deb "$AIFC_CNS_STABLE_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ai-feature-controller.deb "$AIFC_CTR_STABLE_URL" \
         && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ds.deb "$DS_STABLE_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/ms.deb "$MS_STABLE_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msr.deb "$MSR_STABLE_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msp.deb "$MSP_STABLE_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/mst.deb "$MST_STABLE_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/msf.deb "$MSF_STABLE_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/protect-verify.deb "$PROTECT_VERIFY_STABLE_URL" \
+        && wget --no-verbose --show-progress --progress=dot:giga -O /opt/unifi-rclone.deb "$RCLONE_STABLE_URL" \
         && apt-get -y --no-install-recommends -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' \
             install /opt/debs/*.deb /opt/*.deb /opt/unifi-protect-deb/*.deb \
         && rm /opt/*.deb; \
@@ -190,7 +215,7 @@ RUN \
     && echo 'exit 0' > /usr/sbin/policy-rc.d \
     && mv /sbin/mdadm /sbin/mdadm.orig \
     && mv /sbin/ubnt-tools /sbin/ubnt-tools.orig \
-    && systemctl enable storage_disk dbpermissions fix_hosts fix_apt_ubiquiti_sources init_console \
+    && systemctl enable storage_disk dbpermissions fix_hosts fix_apt_ubiquiti_sources init_console ustated-mock \
     && sed -i 's/rm -f/rm -rf/' /sbin/pg-cluster-upgrade \
     && touch /usr/bin/uled-ctrl \
     && chmod +x /usr/bin/uled-ctrl \
